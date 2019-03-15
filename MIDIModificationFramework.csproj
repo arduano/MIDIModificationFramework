@@ -43,7 +43,13 @@
   <ItemGroup>
     <Compile Include="BufferByteReader.cs" />
     <Compile Include="Interfaces\IByteReader.cs" />
+    <Compile Include="Interfaces\IMIDIEvent.cs" />
     <Compile Include="MemoryByteReader.cs" />
+    <Compile Include="MIDI Events\ColorEvent.cs" />
+    <Compile Include="MIDI Events\MIDIEvent.cs" />
+    <Compile Include="MIDI Events\NoteOffEvent.cs" />
+    <Compile Include="MIDI Events\NoteOnEvent.cs" />
+    <Compile Include="MIDI Events\TempoEvent.cs" />
     <Compile Include="MidiFileInfo.cs" />
     <Compile Include="MidiWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

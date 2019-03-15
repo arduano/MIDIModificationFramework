@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MIDIModificationFramework.MIDI_Events;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,6 +24,12 @@ namespace MIDIModificationFramework
             for (int i = 0; i < text.Length; i++) writer.WriteByte((byte)text[i]);
         }
 
+        public void Write(MIDIEvent e)
+        {
+            var data = e.GetDataWithDelta();
+            writer.Write(data, 0, data.Length);
+        }
+
         public void Write(byte[] data)
         {
             writer.Write(data, 0, data.Length);
@@ -41,6 +48,28 @@ namespace MIDIModificationFramework
         public void Write(byte v)
         {
             writer.WriteByte(v);
+        }
+
+        public void WriteVariableLen(int i)
+        {
+            var b = new byte[5];
+            int len = 0;
+            while (true)
+            {
+                byte v = (byte)(i & 0x7F);
+                i = i >> 7;
+                if (i != 0)
+                {
+                    v = (byte)(v | 0x80);
+                    b[len++] = v;
+                }
+                else
+                {
+                    b[len++] = v;
+                    break;
+                }
+            }
+            Write(b.Take(len).ToArray());
         }
 
         public void WriteFormat(ushort s)
@@ -71,7 +100,7 @@ namespace MIDIModificationFramework
         {
             writer.Position = 0;
             Write("MThd");
-            Write((int)6);
+            Write((uint)6);
             WriteFormat(1);
             WriteNtrks(0);
             WriteDivision(96);
@@ -82,7 +111,7 @@ namespace MIDIModificationFramework
             chunkStart = writer.Length;
             writer.Position = chunkStart;
             Write("MTrk");
-            Write((int)0);
+            Write((uint)0);
         }
 
         public void EndTrack()
