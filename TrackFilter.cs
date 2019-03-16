@@ -47,23 +47,21 @@ namespace MIDIModificationFramework
         public byte[] MakeVariableLen(int i)
         {
             var b = new byte[5];
-            int len = 0;
+            int len = 4;
+            byte added = 0x00;
             while (true)
             {
                 byte v = (byte)(i & 0x7F);
                 i = i >> 7;
-                if (i != 0)
+                v = (byte)(v | added);
+                b[len--] = v;
+                added = 0x80;
+                if (i == 0)
                 {
-                    v = (byte)(v | 0x80);
-                    b[len++] = v;
-                }
-                else
-                {
-                    b[len++] = v;
                     break;
                 }
             }
-            return b.Take(len).ToArray();
+            return b.Skip(len + 1).ToArray();
         }
 
         public byte[] FilterTrack(IByteReader reader)
