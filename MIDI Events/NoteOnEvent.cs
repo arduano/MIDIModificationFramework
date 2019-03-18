@@ -20,7 +20,7 @@ namespace MIDIModificationFramework.MIDI_Events
         public byte Note { get; set; }
         public byte Velocity { get; set; }
 
-        public NoteOnEvent(long delta, byte channel, byte note, byte velocity) : base(delta)
+        public NoteOnEvent(uint delta, byte channel, byte note, byte velocity) : base(delta)
         {
             Channel = channel;
             Note = note;

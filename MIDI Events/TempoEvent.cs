@@ -10,7 +10,7 @@ namespace MIDIModificationFramework.MIDI_Events
     {
         public int Tempo;
 
-        public TempoEvent(long delta, int tempo) : base(delta)
+        public TempoEvent(uint delta, int tempo) : base(delta)
         {
             Tempo = tempo;
         }

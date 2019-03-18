@@ -8,7 +8,15 @@ namespace MIDIModificationFramework.MIDI_Events
 {
     public class ColorEvent : MIDIEvent
     {
-        public byte Channel { get; set; } = 0x7f;
+        byte channel = 0x7f;
+        public byte Channel {
+            get => channel;
+            set
+            {
+                if (value > 15 && value != 0x7f) throw new ArgumentException("Channel can only be between 0 and 16, or 7F for all channels");
+                channel = value;
+            }
+        }
         bool gradients;
 
         public byte R { get; set; }
@@ -20,7 +28,7 @@ namespace MIDIModificationFramework.MIDI_Events
         public byte B2 { get; set; }
         public byte A2 { get; set; }
 
-        public ColorEvent(long delta, byte r, byte g, byte b, byte a) : base(delta)
+        public ColorEvent(uint delta, byte r, byte g, byte b, byte a) : base(delta)
         {
             R = r;
             G = g;
@@ -30,7 +38,7 @@ namespace MIDIModificationFramework.MIDI_Events
             gradients = false;
         }
 
-        public ColorEvent(long delta, byte channel, byte r, byte g, byte b, byte a) : base(delta)
+        public ColorEvent(uint delta, byte channel, byte r, byte g, byte b, byte a) : base(delta)
         {
             Channel = (byte)(channel % 16);
             R = r;
@@ -41,7 +49,7 @@ namespace MIDIModificationFramework.MIDI_Events
             gradients = false;
         }
 
-        public ColorEvent(long delta, byte r, byte g, byte b, byte a, byte r2, byte g2, byte b2, byte a2) : base(delta)
+        public ColorEvent(uint delta, byte r, byte g, byte b, byte a, byte r2, byte g2, byte b2, byte a2) : base(delta)
         {
             R = r;
             G = g;
@@ -55,7 +63,7 @@ namespace MIDIModificationFramework.MIDI_Events
             gradients = true;
         }
 
-        public ColorEvent(long delta, byte channel, byte r, byte g, byte b, byte a, byte r2, byte g2, byte b2, byte a2) : base(delta)
+        public ColorEvent(uint delta, byte channel, byte r, byte g, byte b, byte a, byte r2, byte g2, byte b2, byte a2) : base(delta)
         {
             Channel = (byte)(channel % 16);
 

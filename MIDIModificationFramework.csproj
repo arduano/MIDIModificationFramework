@@ -41,19 +41,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BufferByteReader.cs" />
-    <Compile Include="Interfaces\IByteReader.cs" />
-    <Compile Include="Interfaces\IMIDIEvent.cs" />
-    <Compile Include="MemoryByteReader.cs" />
+    <Compile Include="Interfaces\IEventWriter.cs" />
+    <Compile Include="MIDI Events\ChannelPrefixEvent.cs" />
     <Compile Include="MIDI Events\ColorEvent.cs" />
+    <Compile Include="MIDI Events\EndOfTrackEvent.cs" />
+    <Compile Include="MIDI Events\KeySignatureEvent.cs" />
+    <Compile Include="MIDI Events\MajorMidiMessageEvent.cs" />
     <Compile Include="MIDI Events\MIDIEvent.cs" />
+    <Compile Include="MIDI Events\MIDIPortEvent.cs" />
     <Compile Include="MIDI Events\NoteOffEvent.cs" />
     <Compile Include="MIDI Events\NoteOnEvent.cs" />
+    <Compile Include="MIDI Events\SMPTEOffsetEvent.cs" />
+    <Compile Include="MIDI Events\SystemExclusiveMessageEvent.cs" />
     <Compile Include="MIDI Events\TempoEvent.cs" />
-    <Compile Include="MidiFileInfo.cs" />
+    <Compile Include="MIDI Events\TextEvent.cs" />
+    <Compile Include="MIDI Events\TimeSignatureEvent.cs" />
+    <Compile Include="MIDI Events\TrackStartEvent.cs" />
+    <Compile Include="MIDI Events\UndefinedEvent.cs" />
+    <Compile Include="MidiFile.cs" />
+    <Compile Include="MidiTrack.cs" />
     <Compile Include="MidiWriter.cs" />
+    <Compile Include="Note.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TrackFilter.cs" />
+    <Compile Include="EventParser.cs" />
+    <Compile Include="Sequence Functions\EventSequence.cs" />
+    <Compile Include="Sequence Functions\TrackMerger.cs" />
+    <Compile Include="TrackReader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

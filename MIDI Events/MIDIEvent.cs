@@ -8,8 +8,8 @@ namespace MIDIModificationFramework.MIDI_Events
 {
     public abstract class MIDIEvent
     {
-        long deltatime;
-        public long DeltaTime
+        uint deltatime;
+        public uint DeltaTime
         {
             get => deltatime;
             set
@@ -19,7 +19,7 @@ namespace MIDIModificationFramework.MIDI_Events
             }
         }
 
-        public MIDIEvent(long delta)
+        public MIDIEvent(uint delta)
         {
             DeltaTime = delta;
         }
