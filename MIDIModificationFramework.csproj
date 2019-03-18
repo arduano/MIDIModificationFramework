@@ -64,6 +64,7 @@
     <Compile Include="Note.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EventParser.cs" />
+    <Compile Include="Sequence Functions\EventInjector.cs" />
     <Compile Include="Sequence Functions\EventSequence.cs" />
     <Compile Include="Sequence Functions\TrackMerger.cs" />
     <Compile Include="TrackReader.cs" />
