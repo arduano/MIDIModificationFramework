@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework.MIDI_Events
 {
-    public class NoteOnEvent : MIDIEvent
+    public class ControlChangeEvent : MIDIEvent
     {
         byte channel;
         public byte Channel
@@ -17,23 +17,23 @@ namespace MIDIModificationFramework.MIDI_Events
                 channel = (byte)(value & 0x0F);
             }
         }
-        public byte Key { get; set; }
-        public byte Velocity { get; set; }
+        public byte Controller { get; set; }
+        public byte Value { get; set; }
 
-        public NoteOnEvent(uint delta, byte channel, byte key, byte velocity) : base(delta)
+        public ControlChangeEvent(uint delta, byte channel, byte controller, byte value) : base(delta)
         {
             Channel = channel;
-            Key = key;
-            Velocity = velocity;
+            Controller = controller;
+            Value = value;
         }
 
         public override byte[] GetData()
         {
             return new byte[]
             {
-                (byte)(0b10010000 | Channel),
-                Key,
-                Velocity
+                (byte)(0b10110000 | Channel),
+                Controller,
+                Value
             };
         }
     }

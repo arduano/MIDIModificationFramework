@@ -104,37 +104,39 @@ namespace MIDIModificationFramework
             }
             else if (comm == 0b10100000)
             {
-                byte var1 = Read();
-                byte var2 = Read();
-                return new MajorMidiMessageEvent(delta, command, var1, var2);
+                byte channel = (byte)(command & 0b00001111);
+                byte note = Read();
+                byte vel = Read();
+                return new PolyphonicKeyPressureEvent(delta, channel, note, vel);
             }
             else if (comm == 0b10110000)
             {
-                byte var1 = Read();
-                byte var2 = Read();
-                return new MajorMidiMessageEvent(delta, command, var1, var2);
+                byte channel = (byte)(command & 0b00001111);
+                byte controller = Read();
+                byte value = Read();
+                return new ControlChangeEvent(delta, command, controller, value);
             }
             else if (comm == 0b11000000)
             {
-                byte var1 = Read();
-                return new MajorMidiMessageEvent(delta, command, var1);
+                byte program = Read();
+                return new ProgramChangeEvent(delta, command, program);
             }
             else if (comm == 0b11010000)
             {
-                byte var1 = Read();
-                return new MajorMidiMessageEvent(delta, command, var1);
+                byte pressure = Read();
+                return new ChannelPressureEvent(delta, command, pressure);
             }
             else if (comm == 0b11100000)
             {
                 byte var1 = Read();
                 byte var2 = Read();
-                return new MajorMidiMessageEvent(delta, command, var1, var2);
+                return new PitchWheelChangeEvent(delta, command, (short)((var2 << 7) | var1));
             }
             else if (comm == 0b10110000)
             {
-                byte var1 = Read();
-                byte var2 = Read();
-                return new MajorMidiMessageEvent(delta, command, var1, var2);
+                byte cc = Read();
+                byte vv = Read();
+                return new ChannelModeMessageEvent(delta, command, cc, vv);
             }
             else if (command == 0b11110000)
             {
@@ -155,20 +157,20 @@ namespace MIDIModificationFramework
             {
                 byte var1 = Read();
                 byte var2 = Read();
-                return new MajorMidiMessageEvent(delta, command, var1, var2);
+                return new SongPositionPointerEvent(delta, (ushort)((var2 << 7) | var1));
             }
             else if (command == 0b11110011)
             {
-                byte var1 = Read();
-                return new MajorMidiMessageEvent(delta, command, var1);
+                byte pos = Read();
+                return new SongSelectEvent(delta, pos);
             }
             else if (command == 0b11110110)
             {
-                return new MajorMidiMessageEvent(delta, command);
+                return new TuneRequestEvent(delta);
             }
             else if (command == 0b11110111)
             {
-                return new MajorMidiMessageEvent(delta, command);
+                return new EndOfExclusiveEvent(delta);
             }
             else if (command == 0b11111000)
             {

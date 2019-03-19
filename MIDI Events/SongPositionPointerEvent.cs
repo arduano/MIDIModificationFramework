@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MIDIModificationFramework.MIDI_Events
+{
+    public class SongPositionPointerEvent : MIDIEvent
+    {
+        byte channel;
+        public ushort Location { get; set; }
+
+        public SongPositionPointerEvent(uint delta, ushort location) : base(delta)
+        {
+            Location = location;
+        }
+
+        public override byte[] GetData()
+        {
+            return new byte[]
+            {
+                0b11110010,
+                (byte)(Location & 0x7F),
+                (byte)((Location >> 7) & 0x7F)
+            };
+        }
+    }
+}

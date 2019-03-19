@@ -59,7 +59,7 @@ namespace MIDIModificationFramework
                     else if(e is NoteOffEvent)
                     {
                         var n = e as NoteOffEvent;
-                        var note = unendedNotes[n.Note * 16 + n.Channel].Pop();
+                        var note = unendedNotes[n.Key * 16 + n.Channel].Pop();
                         note.ended = true;
                         note.End = time;
                     }

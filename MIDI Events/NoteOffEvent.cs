@@ -17,13 +17,13 @@ namespace MIDIModificationFramework.MIDI_Events
                 channel = (byte)(value & 0x0F);
             }
         }
-        public byte Note { get; set; }
+        public byte Key { get; set; }
         public byte Velocity { get; set; }
 
-        public NoteOffEvent(uint delta, byte channel, byte note) : base(delta)
+        public NoteOffEvent(uint delta, byte channel, byte key) : base(delta)
         {
             Channel = channel;
-            Note = note;
+            Key = key;
         }
 
         public override byte[] GetData()
@@ -31,7 +31,7 @@ namespace MIDIModificationFramework.MIDI_Events
             return new byte[]
             {
                 (byte)(0b10000000 | Channel),
-                Note,
+                Key,
                 0
             };
         }
