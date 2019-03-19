@@ -10,6 +10,7 @@ namespace MIDIModificationFramework
     {
         ulong start;
         public ulong Start { get => start; set => start = value; }
+        public byte Channel { get; set; }
         public byte Key { get; set; }
         public byte Velocity { get; set; }
         ulong end;
@@ -32,8 +33,9 @@ namespace MIDIModificationFramework
             }
         }
 
-        public Note(byte key, byte vel, ulong start, ulong end)
+        public Note(byte channel, byte key, byte vel, ulong start, ulong end)
         {
+            Channel = channel;
             this.start = start;
             this.end = end;
             this.Key = key;

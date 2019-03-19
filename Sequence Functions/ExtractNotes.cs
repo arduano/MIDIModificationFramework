@@ -12,7 +12,7 @@ namespace MIDIModificationFramework
     {
         class UnendedNote : Note
         {
-            public UnendedNote(byte key, byte vel, ulong start, ulong end) : base(key, vel, start, end) { }
+            public UnendedNote(byte channel, byte key, byte vel, ulong start, ulong end) : base(channel, key, vel, start, end) { }
             public bool ended = false;
         }
 
@@ -52,7 +52,7 @@ namespace MIDIModificationFramework
                     if (e is NoteOnEvent)
                     {
                         var n = e as NoteOnEvent;
-                        var note = new UnendedNote(n.Key, n.Velocity, time, 0);
+                        var note = new UnendedNote(n.Channel, n.Key, n.Velocity, time, 0);
                         unendedNotes[n.Key * 16 + n.Channel].Add(note);
                         notesQueue.Add(note);
                     }
