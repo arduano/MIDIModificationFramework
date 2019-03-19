@@ -8,7 +8,7 @@ namespace MIDIModificationFramework.MIDI_Events
 {
     public class TempoEvent : MIDIEvent
     {
-        public int Tempo;
+        public int Tempo { get; set; }
 
         public TempoEvent(uint delta, int tempo) : base(delta)
         {

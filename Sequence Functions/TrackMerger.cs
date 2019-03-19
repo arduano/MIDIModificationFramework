@@ -12,9 +12,6 @@ namespace MIDIModificationFramework
     {
         class Iterator : IEnumerator<MIDIEvent>
         {
-            EventParser reader;
-
-
             bool ended = false;
 
             public MIDIEvent Current { get; private set; }
@@ -63,12 +60,21 @@ namespace MIDIModificationFramework
             public void Reset()
             {
                 ended = false;
-                reader.Reset();
+                for (int i = 0; i < tracks; i++)
+                {
+                    finishedTracks[i] = false;
+                    iterators[i].Reset();
+                    trackTimes[i] = 0;
+                    StepTrack(i);
+                }
             }
 
             public void Dispose()
             {
-
+                for (int i = 0; i < tracks; i++)
+                {
+                    iterators[i].Dispose();
+                }
             }
 
             void StepTrack(int i)
@@ -88,7 +94,7 @@ namespace MIDIModificationFramework
                 trackTimes[i] += e.DeltaTime;
             }
 
-            public Iterator(EventSequence[] sequences)
+            public Iterator(IEnumerable<MIDIEvent>[] sequences)
             {
                 int len = sequences.Length;
                 tracks = len;
@@ -107,14 +113,14 @@ namespace MIDIModificationFramework
         }
 
 
-        EventSequence[] Sequences;
+        IEnumerable<MIDIEvent>[] Sequences;
 
-        public TrackMerger(params EventSequence[] sequences)
+        public TrackMerger(params IEnumerable<MIDIEvent>[] sequences)
         {
             Sequences = sequences;
         }
 
-        public TrackMerger(IEnumerable<EventSequence> sequences)
+        public TrackMerger(IEnumerable<IEnumerable<MIDIEvent>> sequences)
         {
             Sequences = sequences.ToArray();
         }

@@ -12,9 +12,6 @@ namespace MIDIModificationFramework
     {
         class Iterator : IEnumerator<MIDIEvent>
         {
-            EventParser reader;
-
-
             bool ended = false;
 
             public MIDIEvent Current { get; private set; }
@@ -87,15 +84,15 @@ namespace MIDIModificationFramework
             public void Reset()
             {
                 ended = false;
-                reader.Reset();
+                sequence.Reset();
             }
 
             public void Dispose()
             {
-
+                sequence.Dispose();
             }
 
-            public Iterator(EventSequence sequence, Func<MIDIEvent> generator)
+            public Iterator(IEnumerable<MIDIEvent> sequence, Func<MIDIEvent> generator)
             {
                 getEvent = generator;
                 nextGenEvent = generator();
@@ -108,9 +105,9 @@ namespace MIDIModificationFramework
         }
 
         Func<MIDIEvent> getEvent;
-        EventSequence sequence;
+        IEnumerable<MIDIEvent> sequence;
 
-        public EventInjector(EventSequence sequence, Func<MIDIEvent> generator)
+        public EventInjector(IEnumerable<MIDIEvent> sequence, Func<MIDIEvent> generator)
         {
             this.sequence = sequence;
             this.getEvent = generator;
