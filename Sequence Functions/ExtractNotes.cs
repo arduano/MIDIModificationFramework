@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework
 {
-    public class ExtractNotes : IEnumerable<Note>
+    public class ExtractNotes : NoteSequence
     {
         class UnendedNote : Note
         {
@@ -80,14 +80,9 @@ namespace MIDIModificationFramework
 
         public ExtractNotes(IEnumerable<MIDIEvent> sequence) => this.sequence = sequence;
 
-        public IEnumerator<Note> GetEnumerator()
+        public override IEnumerator<Note> GetEnumerator()
         {
             return new Iterator(sequence);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -79,6 +79,9 @@
     <Compile Include="Sequence Functions\EventInjector.cs" />
     <Compile Include="Sequence Functions\EventSequence.cs" />
     <Compile Include="Sequence Functions\ExtractNotes.cs" />
+    <Compile Include="Sequence Functions\ForeachItem.cs" />
+    <Compile Include="Sequence Functions\NoteSequence.cs" />
+    <Compile Include="Sequence Functions\Sequence.cs" />
     <Compile Include="Sequence Functions\TrackMerger.cs" />
     <Compile Include="TrackReader.cs" />
   </ItemGroup>
