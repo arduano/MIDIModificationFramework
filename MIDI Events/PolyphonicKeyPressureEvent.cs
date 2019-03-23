@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework.MIDI_Events
 {
-    class PolyphonicKeyPressureEvent : MIDIEvent
+    public class PolyphonicKeyPressureEvent : MIDIEvent
     {
         byte channel;
         public byte Channel
