@@ -130,7 +130,7 @@ namespace MIDIModificationFramework
             {
                 byte var1 = Read();
                 byte var2 = Read();
-                return new PitchWheelChangeEvent(delta, command, (short)((var2 << 7) | var1));
+                return new PitchWheelChangeEvent(delta, command, (short)(((var2 << 7) | var1) - 8192));
             }
             else if (comm == 0b10110000)
             {

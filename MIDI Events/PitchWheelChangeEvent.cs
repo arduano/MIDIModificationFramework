@@ -24,8 +24,8 @@ namespace MIDIModificationFramework.MIDI_Events
             get => value;
             set
             {
-                if (value > 0x1FFF) this.value = 0x1FFF;
-                else if (value < -0x2000) this.value = -0x2000;
+                if (value > 8191) this.value = 8191;
+                else if (value < -8192) this.value = -8192;
                 else this.value = value;
             }
         }
@@ -38,7 +38,7 @@ namespace MIDIModificationFramework.MIDI_Events
 
         public override byte[] GetData()
         {
-            int val = value + 0x2000;
+            int val = value + 8192;
             return new byte[]
             {
                 (byte)(0b11100000 | Channel),
