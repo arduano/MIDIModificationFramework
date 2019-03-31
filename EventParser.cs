@@ -204,7 +204,20 @@ namespace MIDIModificationFramework
                     int size = (int)ReadVariableLen();
                     var data = new byte[size];
                     reader.Read(data, 0, size);
-                    return new TextEvent(delta, (TextEventType)command, data);
+                    if (command == 0x7F &&
+                        (size == 8 || size == 12) &&
+                        data[0] == 0x00 && data[1] == 0x0F &&
+                        (data[2] < 16 || data[2] == 7F) &&
+                        data[3] == 0)
+                    {
+                        if (data.Length == 8)
+                        {
+                            return new ColorEvent(delta, data[2], data[4], data[5], data[6], data[7]);
+                        }
+                        return new ColorEvent(delta, data[2], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11]);
+                    }
+                    else
+                        return new TextEvent(delta, (TextEventType)command, data);
                 }
                 else if (command == 0x20)
                 {
