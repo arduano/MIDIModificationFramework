@@ -16,7 +16,7 @@ namespace MIDIModificationFramework
         }
 
         public ushort Format { get; private set; }
-        public ushort Division { get; private set; }
+        public ushort PPQ { get; private set; }
         public int TrackCount { get; private set; }
 
         internal MidiChunkPointer[] TrackLocations { get; private set; }
@@ -88,9 +88,9 @@ namespace MIDIModificationFramework
             if (length != 6) throw new Exception("Header chunk size isn't 6");
             Format = ReadInt16();
             ReadInt16();
-            Division = ReadInt16();
+            PPQ = ReadInt16();
             if (Format == 2) throw new Exception("Midi type 2 not supported");
-            if (Division < 0) throw new Exception("Division < 0 not supported");
+            if (PPQ < 0) throw new Exception("Division < 0 not supported");
         }
 
         void ParseTrackChunk(List<MidiChunkPointer> tracks)
