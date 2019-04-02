@@ -126,6 +126,8 @@ namespace MIDIModificationFramework
 
         IEnumerable<Note> sequence;
 
+        public override IEnumerable<IEnumerable<MIDIEvent>> SourceSequences => null;
+
         public EncodeNotes(IEnumerable<Note> sequence)
         {
             this.sequence = sequence;

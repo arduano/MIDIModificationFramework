@@ -107,6 +107,8 @@ namespace MIDIModificationFramework
         Func<MIDIEvent> getEvent;
         IEnumerable<MIDIEvent> sequence;
 
+        public override IEnumerable<IEnumerable<MIDIEvent>> SourceSequences => new IEnumerable<MIDIEvent>[] { sequence };
+
         public EventInjector(IEnumerable<MIDIEvent> sequence, Func<MIDIEvent> generator)
         {
             this.sequence = sequence;
