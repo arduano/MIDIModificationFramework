@@ -60,8 +60,25 @@ namespace MIDIModificationFramework
 
             public void Remove()
             {
-                //if (_ilist.last == curr) _ilist.last = prev;
+                if (_ilist.last.Equals(curr)) _ilist.last = prev;
                 prev.Next = curr.Next;
+            }
+
+            public void Insert(T item)
+            {
+                var i = new ListItem()
+                {
+                    item = item,
+                    Next = curr
+                };
+                if (prev == null)
+                    _ilist.root.Next = i;
+                else
+                    prev.Next = i;
+                //if (curr.Equals(_ilist.last))
+                //{
+                //    _ilist.last = curr;
+                //}
             }
 
             public void Reset()
@@ -103,7 +120,10 @@ namespace MIDIModificationFramework
             li.item = item;
 
             if (root.Next != null && last != null)
+            {
+                while (last.Next != null) last = last.Next;
                 last.Next = li;
+            }
             else
                 root.Next = li;
 
@@ -121,6 +141,8 @@ namespace MIDIModificationFramework
         {
             return new Iterator(this);
         }
+
+        public bool ZeroLen => root.Next == null;
 
         public IEnumerator FastIterate()
         {

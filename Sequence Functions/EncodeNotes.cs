@@ -14,7 +14,6 @@ namespace MIDIModificationFramework
         {
             public NoteOffEvent e;
             public ulong time;
-            public bool removed = false;
         }
 
         class Iterator : IEnumerator<MIDIEvent>
@@ -47,69 +46,64 @@ namespace MIDIModificationFramework
                         nextNote = sequence.Current;
                     }
                 }
-                ulong smallestOff = 0;
-                UnplacedNoteOff smallestOffObj = null;
-                bool passedFirst = false;
-                var iter = noteOffs.Iterate();
-                UnplacedNoteOff n;
-                while (iter.MoveNext(out n))
+
+                if (noteOffs.ZeroLen)
                 {
-                    if (n.removed)
-                        iter.Remove();
-                    if (n.time < smallestOff || !passedFirst)
-                    {
-                        passedFirst = true;
-                        smallestOff = n.time;
-                        smallestOffObj = n;
-                    }
-                }
-                if (passedFirst)
-                {
-                    if (nextNote != null)
-                    {
-                        if (nextNote.Start < smallestOffObj.time)
-                        {
-                            Current = new NoteOnEvent((uint)(nextNote.Start - prevTime), nextNote.Channel, nextNote.Key, nextNote.Velocity);
-                            noteOffs.Add(new UnplacedNoteOff() { e = new NoteOffEvent(0, nextNote.Channel, nextNote.Key), time = nextNote.End });
-                            prevTime = nextNote.Start;
-                            nextNote = null;
-                            return true;
-                        }
-                        else
-                        {
-                            Current = smallestOffObj.e;
-                            Current.DeltaTime = (uint)(smallestOffObj.time - prevTime);
-                            prevTime = smallestOffObj.time;
-                            smallestOffObj.removed = true;
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        Current = smallestOffObj.e;
-                        Current.DeltaTime = (uint)(smallestOffObj.time - prevTime);
-                        prevTime = smallestOffObj.time;
-                        smallestOffObj.removed = true;
-                        return true;
-                    }
+                    SendNote();
+                    return true;
                 }
                 else
                 {
-                    if (nextNote != null)
+                    if (nextNote != null && nextNote.Start < noteOffs.First.time)
                     {
-                        Current = new NoteOnEvent((uint)(nextNote.Start - prevTime), nextNote.Channel, nextNote.Key, nextNote.Velocity);
-                        noteOffs.Add(new UnplacedNoteOff() { e = new NoteOffEvent(0, nextNote.Channel, nextNote.Key), time = nextNote.End });
-                        prevTime = nextNote.Start;
-                        nextNote = null;
+                        SendNote();
                         return true;
                     }
-                    else { return false; }
+                    else
+                    {
+                        SendEvent();
+                        return true;
+                    }
                 }
+            }
+
+            void SendEvent()
+            {
+                var e = noteOffs.Pop();
+                Current = e.e;
+                Current.DeltaTime = (uint)(e.time - prevTime);
+                prevTime = e.time;
+            }
+
+            void SendNote()
+            {
+                Current = new NoteOnEvent((uint)(nextNote.Start - prevTime), nextNote.Channel, nextNote.Key, nextNote.Velocity);
+                var iter = noteOffs.Iterate();
+                UnplacedNoteOff u;
+                var time = nextNote.End;
+                var off = new UnplacedNoteOff() { e = new NoteOffEvent(0, nextNote.Channel, nextNote.Key), time = time };
+                bool notAdded = true;
+                while (iter.MoveNext(out u))
+                {
+                    if(u.time > time)
+                    {
+                        iter.Insert(off);
+                        notAdded = false;
+                        break;
+                    }
+                }
+                if (notAdded)
+                {
+                    noteOffs.Add(off);
+                }
+                prevTime = nextNote.Start;
+                nextNote = null;
             }
 
             public void Reset()
             {
                 ended = false;
+                prevTime = 0;
                 sequence.Reset();
             }
 

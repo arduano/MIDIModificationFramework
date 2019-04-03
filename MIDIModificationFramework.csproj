@@ -81,6 +81,7 @@
     <Compile Include="Sequence Functions\ExtractNotes.cs" />
     <Compile Include="Sequence Functions\ForeachItem.cs" />
     <Compile Include="Sequence Functions\NoteSequence.cs" />
+    <Compile Include="Sequence Functions\PPQChangeSequence.cs" />
     <Compile Include="Sequence Functions\Sequence.cs" />
     <Compile Include="Sequence Functions\TrackMerger.cs" />
     <Compile Include="TrackReader.cs" />
