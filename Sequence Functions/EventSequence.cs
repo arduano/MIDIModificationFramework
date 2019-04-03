@@ -10,6 +10,6 @@ namespace MIDIModificationFramework
 {
     public abstract class EventSequence : Sequence<MIDIEvent>
     {
-
+        public abstract IEnumerable<IEnumerable<MIDIEvent>> SourceSequences { get; }
     }
 }

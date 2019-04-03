@@ -115,6 +115,8 @@ namespace MIDIModificationFramework
 
         IEnumerable<MIDIEvent>[] Sequences;
 
+        public override IEnumerable<IEnumerable<MIDIEvent>> SourceSequences => Sequences;
+
         public TrackMerger(params IEnumerable<MIDIEvent>[] sequences)
         {
             Sequences = sequences;
