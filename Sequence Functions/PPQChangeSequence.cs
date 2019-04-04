@@ -51,11 +51,12 @@ namespace MIDIModificationFramework
 
         IEnumerable<MIDIEvent> sequence;
         double ppqRatio;
+        public override IEnumerable<IEnumerable<MIDIEvent>> SourceSequences => new IEnumerable<MIDIEvent>[] { sequence };
 
-        public PPQChangeSequence(IEnumerable<MIDIEvent> sequence, int startPPQ, int endPPQ)
+        public PPQChangeSequence(IEnumerable<MIDIEvent> sequence, double startPPQ, double endPPQ)
         {
             this.sequence = sequence;
-            ppqRatio = (double)endPPQ / startPPQ;
+            ppqRatio = endPPQ / startPPQ;
         }
 
         public override IEnumerator<MIDIEvent> GetEnumerator()
