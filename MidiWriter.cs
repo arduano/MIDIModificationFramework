@@ -88,7 +88,7 @@ namespace MIDIModificationFramework
             writer.Position = pos;
         }
 
-        public void WriteDivision(ushort s)
+        public void WritePPQ(ushort s)
         {
             long pos = writer.Position;
             writer.Position = 12;
@@ -103,7 +103,7 @@ namespace MIDIModificationFramework
             Write((uint)6);
             WriteFormat(1);
             WriteNtrks(0);
-            WriteDivision(96);
+            WritePPQ(96);
         }
 
         public void InitTrack()

@@ -48,6 +48,7 @@
     <Compile Include="MIDI Events\ChannelPressureEvent.cs" />
     <Compile Include="MIDI Events\ColorEvent.cs" />
     <Compile Include="MIDI Events\ControlChangeEvent.cs" />
+    <Compile Include="MIDI Events\CustomEvent.cs" />
     <Compile Include="MIDI Events\EndOfExclusiveEvent.cs" />
     <Compile Include="MIDI Events\EndOfTrackEvent.cs" />
     <Compile Include="MIDI Events\KeySignatureEvent.cs" />
