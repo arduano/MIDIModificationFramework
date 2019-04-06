@@ -15,19 +15,16 @@ namespace MIDIModificationFramework
         {
             EventParser reader;
 
-            bool ended = false;
-
             public MIDIEvent Current { get; private set; }
 
             object IEnumerator.Current => Current;
 
             public bool MoveNext()
             {
-                if (ended) return false;
                 MIDIEvent next = reader.ParseNextEvent();
-                if (next is EndOfTrackEvent)
+                if (next == null)
                 {
-                    ended = true;
+                    return false;
                 }
                 Current = next;
                 return true;
@@ -35,7 +32,6 @@ namespace MIDIModificationFramework
 
             public void Reset()
             {
-                ended = false;
                 reader.Reset();
             }
 

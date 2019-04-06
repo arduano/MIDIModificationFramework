@@ -12,8 +12,6 @@ namespace MIDIModificationFramework
     {
         class Iterator : IEnumerator<MIDIEvent>
         {
-            bool ended = false;
-
             public MIDIEvent Current { get; private set; }
 
             IEnumerator<MIDIEvent>[] iterators;
@@ -27,7 +25,6 @@ namespace MIDIModificationFramework
 
             public bool MoveNext()
             {
-                if (ended) return false;
                 int unended = 0;
                 ulong smallest = 0;
                 int smallestid = 0;
@@ -36,18 +33,16 @@ namespace MIDIModificationFramework
                 {
                     if (finishedTracks[i]) continue;
                     unended++;
-                    if(trackTimes[i] < smallest || first)
+                    if (trackTimes[i] < smallest || first)
                     {
                         smallest = trackTimes[i];
                         smallestid = i;
                     }
                     first = false;
                 }
-                if(unended == 0)
+                if (unended == 0)
                 {
-                    ended = true;
-                    Current = new EndOfTrackEvent();
-                    return true;
+                    return false;
                 }
                 var e = nextEvents[smallestid];
                 e.DeltaTime = (uint)(trackTimes[smallestid] - currentTime);
@@ -59,7 +54,6 @@ namespace MIDIModificationFramework
 
             public void Reset()
             {
-                ended = false;
                 for (int i = 0; i < tracks; i++)
                 {
                     finishedTracks[i] = false;
@@ -85,7 +79,7 @@ namespace MIDIModificationFramework
                     return;
                 }
                 var e = iterators[i].Current;
-                if (e is EndOfTrackEvent)
+                if (e == null)
                 {
                     finishedTracks[i] = true;
                     return;
@@ -102,7 +96,7 @@ namespace MIDIModificationFramework
                 trackTimes = new ulong[len];
                 finishedTracks = new bool[len];
                 nextEvents = new MIDIEvent[len];
-                for(int i = 0; i < len; i++)
+                for (int i = 0; i < len; i++)
                 {
                     finishedTracks[i] = false;
                     iterators[i] = sequences[i].GetEnumerator();

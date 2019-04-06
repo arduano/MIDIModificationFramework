@@ -116,6 +116,7 @@ namespace MIDIModificationFramework
 
         public void EndTrack()
         {
+            Write(new byte[] { 0, 0xFF, 0x2F, 0x00 });
             uint len = (uint)(writer.Position - chunkStart) - 8;
             writer.Position = chunkStart + 4;
             Write(len);

@@ -27,8 +27,6 @@ namespace MIDIModificationFramework
 
             object IEnumerator.Current => Current;
 
-            bool hasEndOfTrack = false;
-
             public bool MoveNext()
             {
                 if (ended) return false;
@@ -36,14 +34,7 @@ namespace MIDIModificationFramework
                 {
                     if (nextSequenceEvent == null)
                     {
-                        if (!hasEndOfTrack)
-                        {
-                            Current = new EndOfTrackEvent();
-                            ended = true;
-                            return true;
-                        }
-                        else
-                            return false;
+                        return false;
                     }
                     var e = nextSequenceEvent;
                     e.DeltaTime = (uint)(sequenceTime - currentTime);

@@ -50,7 +50,6 @@
     <Compile Include="MIDI Events\ControlChangeEvent.cs" />
     <Compile Include="MIDI Events\CustomEvent.cs" />
     <Compile Include="MIDI Events\EndOfExclusiveEvent.cs" />
-    <Compile Include="MIDI Events\EndOfTrackEvent.cs" />
     <Compile Include="MIDI Events\KeySignatureEvent.cs" />
     <Compile Include="MIDI Events\MajorMidiMessageEvent.cs" />
     <Compile Include="MIDI Events\MIDIEvent.cs" />
