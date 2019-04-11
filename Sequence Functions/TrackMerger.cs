@@ -42,6 +42,7 @@ namespace MIDIModificationFramework
                 }
                 if (unended == 0)
                 {
+                    Current = null;
                     return false;
                 }
                 var e = nextEvents[smallestid];
