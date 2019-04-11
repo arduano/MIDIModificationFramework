@@ -87,6 +87,7 @@
     <Compile Include="Sequence Functions\Sequence.cs" />
     <Compile Include="Sequence Functions\TrackMerger.cs" />
     <Compile Include="TrackReader.cs" />
+    <Compile Include="XZ.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

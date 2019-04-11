@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework
 {
-    public class ParallelStreamIO : Stream
+    internal class ParallelStreamIO : Stream
     {
         public override bool CanRead => true;
 
@@ -33,6 +33,8 @@ namespace MIDIModificationFramework
                 currentChunkAvailableRead = currentChunkSize - offset;
                 if (currentChunkAvailableRead < 0) throw new ArgumentOutOfRangeException("Position", "Position was out of range");
                 currentChunkAvailableWrite = pstream.ChunkDataSize - offset;
+                position = value;
+                streampos = pstream.HeaderChunkSize + pstream.ChunkSize * locations[(int)currentChunk] + 4 + offset;
             }
         }
 
@@ -46,6 +48,7 @@ namespace MIDIModificationFramework
         Func<long> GetNewChunk;
 
         Stream stream;
+        long streampos;
         ParallelStream pstream;
 
         public ParallelStreamIO(long length, List<long> locations, Func<long> getNewChunk, Stream stream, ParallelStream pstream)
@@ -76,7 +79,7 @@ namespace MIDIModificationFramework
         {
             stream.Position = pstream.HeaderChunkSize + pstream.ChunkSize * chunk;
             int v = 0;
-            for (int j = 0; j < 4; j++) v = v << 8 + stream.ReadByte();
+            for (int j = 0; j < 4; j++) v = (v << 8) + stream.ReadByte();
             return v;
         }
 
@@ -86,19 +89,16 @@ namespace MIDIModificationFramework
             if (currentChunkAvailableRead == 0) return 0;
             lock (stream)
             {
+                stream.Position = streampos;
                 while (read != count)
                 {
                     if (currentChunkAvailableRead <= count - read)
                     {
                         stream.Read(buffer, offset + read, currentChunkAvailableRead);
                         read += currentChunkAvailableRead;
-                        try
+                        Position += currentChunkAvailableRead;
+                        if (currentChunkAvailableRead == 0)
                         {
-                            Position += currentChunkAvailableRead;
-                        }
-                        catch
-                        {
-                            currentChunkAvailableRead = 0;
                             break;
                         }
                     }
@@ -128,16 +128,17 @@ namespace MIDIModificationFramework
 
         public override void Write(byte[] buffer, int offset, int count)
         {
+            if (Closed) throw new Exception("Stream closed");
             int written = 0;
             lock (stream)
             {
+                stream.Position = streampos;
                 while (written != count)
                 {
                     int w = 0;
                     if (currentChunkAvailableWrite <= count - written)
                     {
                         stream.Write(buffer, offset + written, currentChunkAvailableWrite);
-                        written += currentChunkAvailableWrite;
                         w = currentChunkAvailableWrite;
                     }
                     else
@@ -149,16 +150,21 @@ namespace MIDIModificationFramework
                     {
                         currentChunkSize += w - currentChunkAvailableRead;
                         length += w - currentChunkAvailableRead;
+                        streampos = stream.Position;
                         WriteChunkSize(locations[(int)currentChunk], currentChunkSize);
                         if (w == currentChunkAvailableWrite)
                         {
                             locations.Add(GetNewChunk());
+                            stream.Position = streampos;
                         }
                         Position += w;
+                        written += w;
+                        stream.Position = streampos;
                     }
                     else
                     {
                         position += w;
+                        written += w;
                         currentChunkAvailableRead -= w;
                         currentChunkAvailableWrite -= w;
                         if (currentChunkAvailableWrite == 0) Position = position;
@@ -184,19 +190,71 @@ namespace MIDIModificationFramework
 
         Stream stream;
 
-        long nextOpenChunk = 1;
+        long nextOpenChunk = 0;
 
         int[] headerData;
 
-        public int GetChunkLen(long chunk)
+        List<ParallelStreamIO> streams = new List<ParallelStreamIO>();
+
+        public ParallelStream(Stream stream, int chunkSize = 4096 * 4096, int headerChunkSize = 4096 * 4096)
         {
-            stream.Position = chunk * ChunkSize;
+            lock (stream)
+            {
+                this.stream = stream;
+                ChunkSize = chunkSize;
+                HeaderChunkSize = headerChunkSize;
+                if (stream.Length < HeaderChunkSize)
+                {
+                    stream.SetLength(HeaderChunkSize);
+                }
+                headerData = new int[headerChunkSize / 4];
+                stream.Position = 0;
+                for (int i = 0; i < headerData.Length; i++)
+                {
+                    int val = 0;
+                    for (int j = 0; j < 4; j++) val = (val << 8) + stream.ReadByte();
+                    headerData[i] = val;
+                }
+            }
+        }
+
+        public Stream GetStream(int id, bool readOnly = false)
+        {
+            id += 1;
+            if (id == 0) throw new ArgumentOutOfRangeException("id", "id can't be -1");
+            List<long> locations = new List<long>();
+            long length = 0;
+            lock (stream)
+            {
+                for (int i = 0; i < headerData.Length; i++)
+                {
+                    if (headerData[i] == id)
+                    {
+                        locations.Add(i);
+                        length += GetChunkLen(i);
+                    }
+                }
+            }
+            if (locations.Count == 0) locations.Add(GetEmptyChunk(id));
+            else
+            {
+                if (!readOnly) throw new Exception("Can't write to a closed write stream. Consider setting readOnly = true");
+            }
+            var s = new ParallelStreamIO(length, locations, () => GetEmptyChunk(id), stream, this);
+            if (readOnly) s.Close();
+            else streams.Add(s);
+            return s;
+        }
+
+        int GetChunkLen(long chunk)
+        {
+            stream.Position = HeaderChunkSize + chunk * ChunkSize;
             int l = 0;
-            for (int i = 0; i < 4; i++) l = l << 8 + stream.ReadByte();
+            for (int i = 0; i < 4; i++) l = (l << 8) + stream.ReadByte();
             return l;
         }
 
-        public void WriteInt(int v)
+        void WriteInt(int v)
         {
             byte[] ib = new byte[4];
             int a = 0;
@@ -204,13 +262,32 @@ namespace MIDIModificationFramework
             stream.Write(ib, 0, 4);
         }
 
-        public void WriteHeaderEntry(long i)
+        void WriteHeaderEntry(long i)
         {
             stream.Position = i * 4;
             WriteInt(headerData[i]);
         }
 
-        public void WriteFullHeaderChunk()
+        public void CloseAllStreams()
+        {
+            foreach (var s in streams) if (!s.Closed) s.Close();
+            streams.Clear();
+        }
+
+        public void DeleteStream(int stream)
+        {
+            stream++;
+            streams = streams.Where(s => !s.Closed).ToList();
+            if (streams.Count > 0) throw new Exception("All streams must be closed before using. Consider using ParallelStream.CloseAllStreams()");
+            for(long i = 0; i < headerData.Length; i++)
+            {
+                if (headerData[i] == stream) headerData[i] = 0;
+                WriteHeaderEntry(i);
+            }
+            nextOpenChunk = -1;
+        }
+
+        void WriteFullHeaderChunk()
         {
             int l = HeaderChunkSize / 4;
             byte[] raw = new byte[HeaderChunkSize];
@@ -235,14 +312,14 @@ namespace MIDIModificationFramework
                 for (int i = 0; i < l; i++)
                 {
                     int v = 0;
-                    for (int j = 0; j < 4; j++) v = v << 8 + raw[l];
+                    for (int j = 0; j < 4; j++) v = (v << 8) + raw[l];
                     data[i] = v;
                 }
             }
             return data;
         }
 
-        public long GetEmptyChunk(int stream)
+        long GetEmptyChunk(int stream)
         {
             if (nextOpenChunk == -1)
             {
@@ -252,7 +329,11 @@ namespace MIDIModificationFramework
             headerData[nextOpenChunk] = stream;
             WriteHeaderEntry(nextOpenChunk);
             long c = nextOpenChunk;
+            if (HeaderChunkSize + (nextOpenChunk + 1) * ChunkSize > this.stream.Length)
+                this.stream.SetLength(HeaderChunkSize + (nextOpenChunk + 1) * ChunkSize);
+            this.stream.Position = HeaderChunkSize + nextOpenChunk * ChunkSize;
             while (headerData[nextOpenChunk] != 0) nextOpenChunk++;
+            this.stream.Write(new byte[] { 0, 0, 0, 0 }, 0, 4);
             return c;
         }
 
