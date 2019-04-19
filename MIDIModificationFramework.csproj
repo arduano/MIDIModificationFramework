@@ -86,6 +86,7 @@
     <Compile Include="Sequence Functions\PPQChangeSequence.cs" />
     <Compile Include="Sequence Functions\Sequence.cs" />
     <Compile Include="Sequence Functions\TrackMerger.cs" />
+    <Compile Include="Sequence Functions\TreeTrackMerger.cs" />
     <Compile Include="TrackReader.cs" />
     <Compile Include="XZ.cs" />
   </ItemGroup>
