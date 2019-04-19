@@ -207,7 +207,7 @@ namespace MIDIModificationFramework
                         int size = (int)ReadVariableLen();
                         var data = new byte[size];
                         reader.Read(data, 0, size);
-                        if (command == 0x7F &&
+                        if (command == 0x0A &&
                             (size == 8 || size == 12) &&
                             data[0] == 0x00 && data[1] == 0x0F &&
                             (data[2] < 16 || data[2] == 7F) &&

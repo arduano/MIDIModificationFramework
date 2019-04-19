@@ -30,20 +30,36 @@ namespace MIDIModificationFramework
         {
             return new TrackReader(() =>
             {
-                return new EventParser(TrackLocations[track], GetBufferedReader());
+                return new EventParser(TrackLocations[track], GetReaderStream());
             });
         }
 
         BufferedStream GetBufferedReader()
         {
-            return new BufferedStream(File.Open(filepath, FileMode.Open, FileAccess.Read, FileShare.Read), streamBufferSize);
+            return new BufferedStream(File.Open(filepath, FileMode.Open, FileAccess.Read, FileShare.Read), 4096);
         }
 
-        public MidiFile(string filename, int streamBufferSize = 4096)
+        Func<Stream> GetReaderStream;
+
+        public MidiFile(Func<Stream> getStreamFunc)
         {
-            this.streamBufferSize = streamBufferSize;
+            GetReaderStream = getStreamFunc;
+            reader = GetReaderStream();
+            ParseHeaderChunk();
+            List<MidiChunkPointer> tracks = new List<MidiChunkPointer>();
+            while (reader.Position < reader.Length)
+            {
+                ParseTrackChunk(tracks);
+            }
+            TrackLocations = tracks.ToArray();
+            TrackCount = TrackLocations.Length;
+        }
+
+        public MidiFile(string filename)
+        {
             filepath = filename;
-            reader = GetBufferedReader();
+            GetReaderStream = GetBufferedReader;
+            reader = GetReaderStream();
             ParseHeaderChunk();
             List<MidiChunkPointer> tracks = new List<MidiChunkPointer>();
             while (reader.Position < reader.Length)

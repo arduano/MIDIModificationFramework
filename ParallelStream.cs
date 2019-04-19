@@ -89,9 +89,9 @@ namespace MIDIModificationFramework
             if (currentChunkAvailableRead == 0) return 0;
             lock (stream)
             {
-                stream.Position = streampos;
                 while (read != count)
                 {
+                    stream.Position = streampos;
                     if (currentChunkAvailableRead <= count - read)
                     {
                         stream.Read(buffer, offset + read, currentChunkAvailableRead);
@@ -105,14 +105,14 @@ namespace MIDIModificationFramework
                     else
                     {
                         stream.Read(buffer, offset + read, count - read);
-                        position += count - read;
-                        currentChunkAvailableRead -= count - read;
+                        read = count;
+                        Position += read;
                     }
                 }
             }
             return read;
         }
-
+        
         public override long Seek(long offset, SeekOrigin origin)
         {
             if (origin == SeekOrigin.Begin) Position = offset;
@@ -132,10 +132,10 @@ namespace MIDIModificationFramework
             int written = 0;
             lock (stream)
             {
-                stream.Position = streampos;
                 while (written != count)
                 {
                     int w = 0;
+                    stream.Position = streampos;
                     if (currentChunkAvailableWrite <= count - written)
                     {
                         stream.Write(buffer, offset + written, currentChunkAvailableWrite);
@@ -148,26 +148,19 @@ namespace MIDIModificationFramework
                     }
                     if (w > currentChunkAvailableRead)
                     {
-                        currentChunkSize += w - currentChunkAvailableRead;
                         length += w - currentChunkAvailableRead;
-                        streampos = stream.Position;
                         WriteChunkSize(locations[(int)currentChunk], currentChunkSize);
-                        if (w == currentChunkAvailableWrite)
+                        if (w == currentChunkAvailableWrite && currentChunk == locations.Count - 1)
                         {
                             locations.Add(GetNewChunk());
-                            stream.Position = streampos;
                         }
                         Position += w;
                         written += w;
-                        stream.Position = streampos;
                     }
                     else
                     {
-                        position += w;
+                        Position += w;
                         written += w;
-                        currentChunkAvailableRead -= w;
-                        currentChunkAvailableWrite -= w;
-                        if (currentChunkAvailableWrite == 0) Position = position;
                     }
                 }
             }
@@ -243,6 +236,7 @@ namespace MIDIModificationFramework
             var s = new ParallelStreamIO(length, locations, () => GetEmptyChunk(id), stream, this);
             if (readOnly) s.Close();
             else streams.Add(s);
+            s.Position = 0;
             return s;
         }
 
