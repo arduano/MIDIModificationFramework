@@ -148,6 +148,7 @@ namespace MIDIModificationFramework
                     }
                     if (w > currentChunkAvailableRead)
                     {
+                        currentChunkSize += w - currentChunkAvailableRead;
                         length += w - currentChunkAvailableRead;
                         WriteChunkSize(locations[(int)currentChunk], currentChunkSize);
                         if (w == currentChunkAvailableWrite && currentChunk == locations.Count - 1)
