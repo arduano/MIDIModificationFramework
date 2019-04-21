@@ -10,6 +10,11 @@ namespace MIDIModificationFramework.MIDI_Events
     {
         public TuneRequestEvent(uint delta) : base(delta) { }
 
+        public override MIDIEvent Clone()
+        {
+            return new TuneRequestEvent(DeltaTime);
+        }
+
         public override byte[] GetData()
         {
             return new byte[] { 0b11110110 };

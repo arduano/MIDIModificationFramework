@@ -17,12 +17,23 @@ namespace MIDIModificationFramework.MIDI_Events
 
         public MajorMidiMessageEvent(uint delta, byte command, byte var1) : base(delta)
         {
-            data = new byte[] { command , var1 };
+            data = new byte[] { command, var1 };
         }
 
         public MajorMidiMessageEvent(uint delta, byte command, byte var1, byte var2) : base(delta)
         {
             data = new byte[] { command, var1, var2 };
+        }
+
+        public override MIDIEvent Clone()
+        {
+            if (data.Length == 1)
+                return new MajorMidiMessageEvent(DeltaTime, data[0]);
+            if (data.Length == 2)
+                return new MajorMidiMessageEvent(DeltaTime, data[0], data[1]);
+            if (data.Length == 3)
+                return new MajorMidiMessageEvent(DeltaTime, data[0], data[1], data[2]);
+            else throw new Exception("Bad Things™ happened");
         }
 
         public override byte[] GetData()

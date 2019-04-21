@@ -27,6 +27,11 @@ namespace MIDIModificationFramework.MIDI_Events
             Value = value;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new ControlChangeEvent(DeltaTime, Channel, Controller, Value);
+        }
+
         public override byte[] GetData()
         {
             return new byte[]

@@ -27,6 +27,11 @@ namespace MIDIModificationFramework.MIDI_Events
             V = vv;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new ChannelModeMessageEvent(DeltaTime, Channel, C, V);
+        }
+
         public override byte[] GetData()
         {
             return new byte[]

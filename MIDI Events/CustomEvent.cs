@@ -14,6 +14,11 @@ namespace MIDIModificationFramework.MIDI_Events
             this.data = data;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new CustomEvent(DeltaTime, (byte[])data.Clone());
+        }
+
         public override byte[] GetData()
         {
             return data;

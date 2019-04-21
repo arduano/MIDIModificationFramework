@@ -59,6 +59,11 @@ namespace MIDIModificationFramework.MIDI_Events
             Bytes = data;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new TextEvent(DeltaTime, Type, (byte[])data.Clone());
+        }
+
         public override byte[] GetData()
         {
             byte[] len = MakeVariableLen(Length);

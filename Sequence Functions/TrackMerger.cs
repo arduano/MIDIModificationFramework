@@ -79,7 +79,7 @@ namespace MIDIModificationFramework
                     finishedTracks[i] = true;
                     return;
                 }
-                var e = iterators[i].Current;
+                var e = iterators[i].Current.Clone();
                 if (e == null)
                 {
                     finishedTracks[i] = true;

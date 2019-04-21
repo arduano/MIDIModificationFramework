@@ -15,6 +15,11 @@ namespace MIDIModificationFramework.MIDI_Events
             Song = song;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new SongSelectEvent(DeltaTime, Song);
+        }
+
         public override byte[] GetData()
         {
             return new byte[]

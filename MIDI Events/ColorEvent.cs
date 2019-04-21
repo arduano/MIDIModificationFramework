@@ -79,6 +79,11 @@ namespace MIDIModificationFramework.MIDI_Events
             gradients = true;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new ColorEvent(DeltaTime, Channel, R, G, B, A, R2, G2, B2, A2);
+        }
+
         public override byte[] GetData()
         {
             byte[] data;

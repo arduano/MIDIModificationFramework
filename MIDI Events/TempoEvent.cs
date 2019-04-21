@@ -15,6 +15,11 @@ namespace MIDIModificationFramework.MIDI_Events
             Tempo = tempo;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new TempoEvent(DeltaTime, Tempo);
+        }
+
         public override byte[] GetData()
         {
             byte[] data = new byte[6];

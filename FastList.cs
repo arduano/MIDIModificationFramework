@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework
 {
-    public class FastList<T> : IEnumerable
+    public class FastList<T> : IEnumerable<T>
     {
         private class ListItem
         {
@@ -88,7 +88,7 @@ namespace MIDIModificationFramework
             }
         }
 
-        public class FastIterator : IEnumerator
+        public class FastIterator : IEnumerator<T>
         {
             FastList<T> _ilist;
 
@@ -101,11 +101,23 @@ namespace MIDIModificationFramework
             }
 
             public object Current => curr.item;
+
+            T IEnumerator<T>.Current => curr.item;
+
+            public void Dispose()
+            {
+                
+            }
+
             public bool MoveNext()
             {
-                curr = curr.Next;
+                try
+                {
+                    curr = curr.Next;
 
-                return curr != null;
+                    return curr != null;
+                }
+                catch { return false; }
             }
 
             public void Reset()
@@ -144,9 +156,8 @@ namespace MIDIModificationFramework
 
         public bool ZeroLen => root.Next == null;
 
-        public IEnumerator FastIterate()
+        public IEnumerator<T> FastIterate()
         {
-            if (root.Next == null) return new Note[0].GetEnumerator();
             return new FastIterator(this);
         }
 
@@ -176,6 +187,11 @@ namespace MIDIModificationFramework
         }
 
         public IEnumerator GetEnumerator()
+        {
+            return FastIterate();
+        }
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
             return FastIterate();
         }

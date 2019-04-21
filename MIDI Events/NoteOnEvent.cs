@@ -27,6 +27,11 @@ namespace MIDIModificationFramework.MIDI_Events
             Velocity = velocity;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new NoteOnEvent(DeltaTime, Channel, Key, Velocity);
+        }
+
         public override byte[] GetData()
         {
             return new byte[]

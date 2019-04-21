@@ -46,8 +46,6 @@ namespace MIDIModificationFramework
             }
         }
 
-        EventParser parser;
-
         Func<EventParser> GetParser;
 
         public override IEnumerable<IEnumerable<MIDIEvent>> SourceSequences => null;
