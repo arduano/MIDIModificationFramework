@@ -23,9 +23,6 @@ namespace MIDIModificationFramework
 
         Stream reader;
 
-        int streamBufferSize = 4096;
-        string filepath;
-
         public TrackReader GetTrack(int track)
         {
             return new TrackReader(() =>
@@ -36,7 +33,7 @@ namespace MIDIModificationFramework
 
         BufferedStream GetBufferedReader()
         {
-            return new BufferedStream(File.Open(filepath, FileMode.Open, FileAccess.Read, FileShare.Read), 4096);
+            return new BufferedStream(File.Open(filepath, FileMode.Open, FileAccess.Read, FileShare.Read), 4096 * 256);
         }
 
         Func<Stream> GetReaderStream;
