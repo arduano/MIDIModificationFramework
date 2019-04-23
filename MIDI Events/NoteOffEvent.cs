@@ -28,7 +28,7 @@ namespace MIDIModificationFramework.MIDI_Events
 
         public override MIDIEvent Clone()
         {
-            return new MIDIPortEvent(DeltaTime, Channel);
+            return new NoteOffEvent(DeltaTime, Channel, Key);
         }
 
         public override byte[] GetData()
