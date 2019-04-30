@@ -31,6 +31,8 @@ namespace MIDIModificationFramework
             });
         }
 
+        string filepath;
+
         BufferedStream GetBufferedReader()
         {
             return new BufferedStream(File.Open(filepath, FileMode.Open, FileAccess.Read, FileShare.Read), 4096 * 256);

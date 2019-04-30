@@ -17,6 +17,22 @@ namespace MIDIModificationFramework
         long start;
         long end;
 
+        public double Progress
+        {
+            get
+            {
+                try
+                {
+                    return (reader.Position - start) / (double)(end - start);
+                }
+                catch
+                {
+                    return 1;
+                }
+            }
+        }
+        public long Size => end - start;
+
         public bool Ended { get; private set; } = false;
 
         internal EventParser(MidiFile.MidiChunkPointer pointer, Stream reader)

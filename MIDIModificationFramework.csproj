@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\CorruptChunkHeadersException.cs" />
     <Compile Include="FastList.cs" />
     <Compile Include="Interfaces\IEventWriter.cs" />
     <Compile Include="MIDI Events\ChannelModeMessageEvent.cs" />

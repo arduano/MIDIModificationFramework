@@ -15,6 +15,8 @@ namespace MIDIModificationFramework
         {
             EventParser reader;
 
+            public double Progress => reader.Progress;
+
             public MIDIEvent Current { get; private set; }
 
             object IEnumerator.Current => Current;
@@ -37,7 +39,7 @@ namespace MIDIModificationFramework
 
             public void Dispose()
             {
-
+                reader.Dispose();
             }
 
             public Iterator(EventParser reader)
@@ -48,6 +50,23 @@ namespace MIDIModificationFramework
 
         Func<EventParser> GetParser;
 
+        bool singleUse = false;
+        bool used = true;
+        Iterator lastIter = null;
+
+        public double Progress
+        {
+            get
+            {
+                if (singleUse)
+                    if (lastIter == null)
+                        return 0;
+                    else
+                        return lastIter.Progress;
+                throw new Exception("Progress can only be accessed on single use streams");
+            }
+        }
+
         public override IEnumerable<IEnumerable<MIDIEvent>> SourceSequences => null;
 
         internal TrackReader(Func<EventParser> parserfunc)
@@ -55,8 +74,18 @@ namespace MIDIModificationFramework
             GetParser = parserfunc;
         }
 
+        public TrackReader GetSingleUse()
+        {
+            return new TrackReader(GetParser) { singleUse = true };
+        }
+
         public override IEnumerator<MIDIEvent> GetEnumerator()
         {
+            if (singleUse)
+            {
+                lastIter = new Iterator(GetParser());
+                return lastIter;
+            }
             return new Iterator(GetParser());
         }
     }
