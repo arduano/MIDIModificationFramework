@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MIDIModificationFramework
@@ -26,6 +27,12 @@ namespace MIDIModificationFramework
             get => position;
             set
             {
+                bool locked = false;
+                if (!Monitor.IsEntered(stream))
+                {
+                    Monitor.Enter(stream);
+                    locked = true;
+                }
                 int offset = (int)(value % pstream.ChunkDataSize);
                 currentChunk = (value - offset) / pstream.ChunkDataSize;
                 if (currentChunk >= locations.Count) throw new ArgumentOutOfRangeException("Position", "Position was out of range");
@@ -35,6 +42,7 @@ namespace MIDIModificationFramework
                 currentChunkAvailableWrite = pstream.ChunkDataSize - offset;
                 position = value;
                 streampos = pstream.HeaderChunkSize + pstream.ChunkSize * locations[(int)currentChunk] + 4 + offset;
+                if (locked) Monitor.Exit(stream);
             }
         }
 
@@ -50,6 +58,8 @@ namespace MIDIModificationFramework
         Stream stream;
         long streampos;
         ParallelStream pstream;
+
+        bool locked = false;
 
         public ParallelStreamIO(long length, List<long> locations, Func<long> getNewChunk, Stream stream, ParallelStream pstream)
         {
@@ -104,9 +114,9 @@ namespace MIDIModificationFramework
                     }
                     else
                     {
-                        stream.Read(buffer, offset + read, count - read);
+                        int r = stream.Read(buffer, offset + read, count - read);
                         read = count;
-                        Position += read;
+                        Position += r;
                     }
                 }
                 return read;

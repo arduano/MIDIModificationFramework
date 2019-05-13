@@ -51,7 +51,7 @@ namespace MIDIModificationFramework
         Func<EventParser> GetParser;
 
         bool singleUse = false;
-        bool used = true;
+        bool used = false;
         Iterator lastIter = null;
 
         public double Progress
@@ -83,6 +83,8 @@ namespace MIDIModificationFramework
         {
             if (singleUse)
             {
+                if (used) throw new Exception("Single use reader already used");
+                used = true;
                 lastIter = new Iterator(GetParser());
                 return lastIter;
             }
