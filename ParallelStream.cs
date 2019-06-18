@@ -105,8 +105,8 @@ namespace MIDIModificationFramework
                     else
                     {
                         stream.Read(buffer, offset + read, count - read);
+                        Position += count - read;
                         read = count;
-                        Position += read;
                     }
                 }
             }
