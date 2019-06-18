@@ -14,6 +14,11 @@ namespace MIDIModificationFramework.MIDI_Events
             Channel = channel;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new MIDIPortEvent(DeltaTime, Channel);
+        }
+
         public override byte[] GetData()
         {
             return new byte[] { 0xFF, 0x20, 0x01, Channel };

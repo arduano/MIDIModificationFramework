@@ -1,25 +1,26 @@
-﻿﻿using MIDIModificationFramework.MIDI_Events;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections;
 using System.Threading.Tasks;
+using MIDIModificationFramework.MIDI_Events;
 
 namespace MIDIModificationFramework
 {
-    public class PPQChangeSequence : EventSequence
+    public class ExtractEventSequence : EventSequence
     {
         class Iterator : IEnumerator<MIDIEvent>
         {
             IEnumerator<MIDIEvent> sequence;
 
-            double ppqRatio;
+            Type eventType;
+            uint delta = 0;
 
-            public Iterator(IEnumerable<MIDIEvent> sequence, double ppqRatio)
+            public Iterator(IEnumerable<MIDIEvent> sequence, Type eventType)
             {
                 this.sequence = sequence.GetEnumerator();
-                this.ppqRatio = ppqRatio;
+                this.eventType = eventType;
             }
 
             public MIDIEvent Current { get; set; }
@@ -33,13 +34,19 @@ namespace MIDIModificationFramework
             double lastDiff = 0;
             public bool MoveNext()
             {
-                if (!sequence.MoveNext()) return false;
-                var e = sequence.Current.Clone();
-                double time = lastDiff + e.DeltaTime * ppqRatio;
-                uint delta = (uint)Math.Round(time);
-                lastDiff = time - delta;
-                e.DeltaTime = delta;
-                Current = e;
+                while (true)
+                {
+                    if (!sequence.MoveNext()) return false;
+                    if (eventType.IsInstanceOfType(sequence.Current))
+                    {
+                        var e = sequence.Current.Clone();
+                        e.DeltaTime += delta;
+                        delta = 0;
+                        Current = e;
+                        break;
+                    }
+                    else delta += sequence.Current.DeltaTime;
+                }
                 return true;
             }
 
@@ -50,18 +57,18 @@ namespace MIDIModificationFramework
         }
 
         IEnumerable<MIDIEvent> sequence;
-        double ppqRatio;
+        Type eventType;
         public override IEnumerable<IEnumerable<MIDIEvent>> SourceSequences => new IEnumerable<MIDIEvent>[] { sequence };
 
-        public PPQChangeSequence(IEnumerable<MIDIEvent> sequence, double startPPQ, double endPPQ)
+        public ExtractEventSequence(IEnumerable<MIDIEvent> sequence, Type eventType)
         {
             this.sequence = sequence;
-            ppqRatio = endPPQ / startPPQ;
+            this.eventType = eventType;
         }
 
         public override IEnumerator<MIDIEvent> GetEnumerator()
         {
-            return new Iterator(sequence, ppqRatio);
+            return new Iterator(sequence, eventType);
         }
     }
 }

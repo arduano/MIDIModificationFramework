@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MIDIModificationFramework
@@ -26,6 +27,12 @@ namespace MIDIModificationFramework
             get => position;
             set
             {
+                bool locked = false;
+                if (!Monitor.IsEntered(stream))
+                {
+                    Monitor.Enter(stream);
+                    locked = true;
+                }
                 int offset = (int)(value % pstream.ChunkDataSize);
                 currentChunk = (value - offset) / pstream.ChunkDataSize;
                 if (currentChunk >= locations.Count) throw new ArgumentOutOfRangeException("Position", "Position was out of range");
@@ -35,6 +42,7 @@ namespace MIDIModificationFramework
                 currentChunkAvailableWrite = pstream.ChunkDataSize - offset;
                 position = value;
                 streampos = pstream.HeaderChunkSize + pstream.ChunkSize * locations[(int)currentChunk] + 4 + offset;
+                if (locked) Monitor.Exit(stream);
             }
         }
 
@@ -50,6 +58,8 @@ namespace MIDIModificationFramework
         Stream stream;
         long streampos;
         ParallelStream pstream;
+
+        bool locked = false;
 
         public ParallelStreamIO(long length, List<long> locations, Func<long> getNewChunk, Stream stream, ParallelStream pstream)
         {
@@ -85,10 +95,10 @@ namespace MIDIModificationFramework
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            int read = 0;
-            if (currentChunkAvailableRead == 0) return 0;
             lock (stream)
             {
+                int read = 0;
+                if (currentChunkAvailableRead == 0) return 0;
                 while (read != count)
                 {
                     stream.Position = streampos;
@@ -104,13 +114,13 @@ namespace MIDIModificationFramework
                     }
                     else
                     {
-                        stream.Read(buffer, offset + read, count - read);
-                        Position += count - read;
+                        int r = stream.Read(buffer, offset + read, count - read);
                         read = count;
+                        Position += r;
                     }
                 }
+                return read;
             }
-            return read;
         }
         
         public override long Seek(long offset, SeekOrigin origin)
@@ -128,10 +138,10 @@ namespace MIDIModificationFramework
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (Closed) throw new Exception("Stream closed");
-            int written = 0;
             lock (stream)
             {
+                if (Closed) throw new Exception("Stream closed");
+                int written = 0;
                 while (written != count)
                 {
                     int w = 0;
@@ -149,6 +159,8 @@ namespace MIDIModificationFramework
                     if (w > currentChunkAvailableRead)
                     {
                         currentChunkSize += w - currentChunkAvailableRead;
+                        if(Position + w < currentChunkSize)
+                        { }
                         length += w - currentChunkAvailableRead;
                         WriteChunkSize(locations[(int)currentChunk], currentChunkSize);
                         if (w == currentChunkAvailableWrite && currentChunk == locations.Count - 1)
@@ -214,31 +226,34 @@ namespace MIDIModificationFramework
 
         public Stream GetStream(int id, bool readOnly = false)
         {
-            id += 1;
-            if (id == 0) throw new ArgumentOutOfRangeException("id", "id can't be -1");
-            List<long> locations = new List<long>();
-            long length = 0;
             lock (stream)
             {
-                for (int i = 0; i < headerData.Length; i++)
+                id += 1;
+                if (id == 0) throw new ArgumentOutOfRangeException("id", "id can't be -1");
+                List<long> locations = new List<long>();
+                long length = 0;
+                lock (stream)
                 {
-                    if (headerData[i] == id)
+                    for (int i = 0; i < headerData.Length; i++)
                     {
-                        locations.Add(i);
-                        length += GetChunkLen(i);
+                        if (headerData[i] == id)
+                        {
+                            locations.Add(i);
+                            length += GetChunkLen(i);
+                        }
                     }
                 }
+                if (locations.Count == 0) locations.Add(GetEmptyChunk(id));
+                else
+                {
+                    if (!readOnly) throw new Exception("Can't write to a closed write stream. Consider setting readOnly = true");
+                }
+                var s = new ParallelStreamIO(length, locations, () => GetEmptyChunk(id), stream, this);
+                if (readOnly) s.Close();
+                else streams.Add(s);
+                s.Position = 0;
+                return s;
             }
-            if (locations.Count == 0) locations.Add(GetEmptyChunk(id));
-            else
-            {
-                if (!readOnly) throw new Exception("Can't write to a closed write stream. Consider setting readOnly = true");
-            }
-            var s = new ParallelStreamIO(length, locations, () => GetEmptyChunk(id), stream, this);
-            if (readOnly) s.Close();
-            else streams.Add(s);
-            s.Position = 0;
-            return s;
         }
 
         int GetChunkLen(long chunk)
@@ -271,15 +286,18 @@ namespace MIDIModificationFramework
 
         public void DeleteStream(int stream)
         {
-            stream++;
-            streams = streams.Where(s => !s.Closed).ToList();
-            if (streams.Count > 0) throw new Exception("All streams must be closed before using. Consider using ParallelStream.CloseAllStreams()");
-            for(long i = 0; i < headerData.Length; i++)
+            lock (this.stream)
             {
-                if (headerData[i] == stream) headerData[i] = 0;
-                WriteHeaderEntry(i);
+                stream++;
+                streams = streams.Where(s => !s.Closed).ToList();
+                if (streams.Count > 0) throw new Exception("All streams must be closed before using. Consider using ParallelStream.CloseAllStreams()");
+                for (long i = 0; i < headerData.Length; i++)
+                {
+                    if (headerData[i] == stream) headerData[i] = 0;
+                    WriteHeaderEntry(i);
+                }
+                nextOpenChunk = -1;
             }
-            nextOpenChunk = -1;
         }
 
         void WriteFullHeaderChunk()
@@ -334,6 +352,7 @@ namespace MIDIModificationFramework
 
         public void Dispose()
         {
+            stream.Close();
             stream.Dispose();
         }
     }

@@ -21,6 +21,11 @@ namespace MIDIModificationFramework.MIDI_Events
             BB = bb;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new TimeSignatureEvent(DeltaTime, Numerator, Denominator, TicksPerClick, BB);
+        }
+
         public override byte[] GetData()
         {
             return new byte[]

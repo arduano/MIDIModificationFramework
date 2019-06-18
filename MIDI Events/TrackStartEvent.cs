@@ -10,6 +10,11 @@ namespace MIDIModificationFramework.MIDI_Events
     {
         public TrackStartEvent() : base(0) { }
 
+        public override MIDIEvent Clone()
+        {
+            return new TrackStartEvent();
+        }
+
         public override byte[] GetData()
         {
             return new byte[] { 0xFF, 0x00, 0x02 };

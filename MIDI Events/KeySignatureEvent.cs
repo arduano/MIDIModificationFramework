@@ -17,6 +17,11 @@ namespace MIDIModificationFramework.MIDI_Events
             MI = mi;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new KeySignatureEvent(DeltaTime, SF, MI);
+        }
+
         public override byte[] GetData()
         {
             return new byte[] { 0xFF, 0x59, 0x02, SF, MI };

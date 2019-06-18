@@ -15,6 +15,11 @@ namespace MIDIModificationFramework.MIDI_Events
             Command = command;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new UndefinedEvent(DeltaTime, Command);
+        }
+
         public override byte[] GetData()
         {
             return new byte[] { Command };

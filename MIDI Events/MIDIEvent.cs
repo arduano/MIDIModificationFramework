@@ -49,5 +49,7 @@ namespace MIDIModificationFramework.MIDI_Events
         {
             return MakeVariableLen((int)DeltaTime).Concat(GetData()).ToArray();
         }
+
+        public abstract MIDIEvent Clone();
     }
 }

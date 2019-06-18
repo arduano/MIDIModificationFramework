@@ -23,6 +23,11 @@ namespace MIDIModificationFramework.MIDI_Events
             FractionalFrames = ff;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new SMPTEOffsetEvent(DeltaTime, Hours, Minutes, Seconds, Frames, FractionalFrames);
+        }
+
         public override byte[] GetData()
         {
             return new byte[]

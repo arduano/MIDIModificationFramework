@@ -36,6 +36,11 @@ namespace MIDIModificationFramework.MIDI_Events
             Value = value;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new PitchWheelChangeEvent(DeltaTime, Channel, Value);
+        }
+
         public override byte[] GetData()
         {
             int val = value + 8192;

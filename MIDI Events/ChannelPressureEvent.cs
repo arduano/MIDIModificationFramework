@@ -25,6 +25,11 @@ namespace MIDIModificationFramework.MIDI_Events
             Pressure = pressure;
         }
 
+        public override MIDIEvent Clone()
+        {
+            return new ChannelPressureEvent(DeltaTime, Channel, Pressure);
+        }
+
         public override byte[] GetData()
         {
             return new byte[]

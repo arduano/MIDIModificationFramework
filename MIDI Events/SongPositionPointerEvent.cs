@@ -8,12 +8,16 @@ namespace MIDIModificationFramework.MIDI_Events
 {
     public class SongPositionPointerEvent : MIDIEvent
     {
-        byte channel;
         public ushort Location { get; set; }
 
         public SongPositionPointerEvent(uint delta, ushort location) : base(delta)
         {
             Location = location;
+        }
+
+        public override MIDIEvent Clone()
+        {
+            return new SongPositionPointerEvent(DeltaTime, Location);
         }
 
         public override byte[] GetData()
