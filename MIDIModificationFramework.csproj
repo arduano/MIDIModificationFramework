@@ -78,9 +78,11 @@
     <Compile Include="ParallelStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EventParser.cs" />
+    <Compile Include="Sequence Functions\CancelTempoEventsSequence.cs" />
     <Compile Include="Sequence Functions\EncodeNotes.cs" />
     <Compile Include="Sequence Functions\EventInjector.cs" />
     <Compile Include="Sequence Functions\EventSequence.cs" />
+    <Compile Include="Sequence Functions\ExtractEventSequence.cs" />
     <Compile Include="Sequence Functions\ExtractNotes.cs" />
     <Compile Include="Sequence Functions\ForeachItem.cs" />
     <Compile Include="Sequence Functions\NoteSequence.cs" />
