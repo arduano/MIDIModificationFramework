@@ -1,4 +1,4 @@
-﻿using MIDIModificationFramework.MIDI_Events;
+﻿using MIDIModificationFramework.MIDIEvents;
 using System;
 using System.Collections.Generic;
 using System.IO;
