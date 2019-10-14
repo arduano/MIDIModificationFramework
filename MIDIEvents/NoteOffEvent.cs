@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework.MIDIEvents
 {
-    public class NoteOffEvent : MIDIEvent
+    public class NoteOffEvent : NoteEvent
     {
         byte channel;
         public byte Channel
@@ -17,10 +17,9 @@ namespace MIDIModificationFramework.MIDIEvents
                 channel = (byte)(value & 0x0F);
             }
         }
-        public byte Key { get; set; }
         public byte Velocity { get; set; }
 
-        public NoteOffEvent(uint delta, byte channel, byte key) : base(delta)
+        public NoteOffEvent(uint delta, byte channel, byte key) : base(delta, key)
         {
             Channel = channel;
             Key = key;

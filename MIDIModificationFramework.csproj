@@ -57,6 +57,7 @@
     <Compile Include="MIDIEvents\MajorMidiMessageEvent.cs" />
     <Compile Include="MIDIEvents\MIDIEvent.cs" />
     <Compile Include="MIDIEvents\MIDIPortEvent.cs" />
+    <Compile Include="MIDIEvents\NoteEvent.cs" />
     <Compile Include="MIDIEvents\NoteOffEvent.cs" />
     <Compile Include="MIDIEvents\NoteOnEvent.cs" />
     <Compile Include="MIDIEvents\PitchWheelChangeEvent.cs" />
