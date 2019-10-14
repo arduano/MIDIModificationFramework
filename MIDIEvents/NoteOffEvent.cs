@@ -8,15 +8,6 @@ namespace MIDIModificationFramework.MIDIEvents
 {
     public class NoteOffEvent : NoteEvent
     {
-        byte channel;
-        public byte Channel
-        {
-            get { return channel; }
-            set
-            {
-                channel = (byte)(value & 0x0F);
-            }
-        }
         public byte Velocity { get; set; }
 
         public NoteOffEvent(uint delta, byte channel, byte key) : base(delta, key)
