@@ -10,7 +10,7 @@ namespace MIDIModificationFramework.MIDIEvents
     {
         public byte Command { get; set; }
 
-        public UndefinedEvent(uint delta, byte command) : base(delta)
+        public UndefinedEvent(double delta, byte command) : base(delta)
         {
             Command = command;
         }

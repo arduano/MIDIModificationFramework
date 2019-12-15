@@ -30,7 +30,7 @@ namespace MIDIModificationFramework.MIDIEvents
             }
         }
 
-        public PitchWheelChangeEvent(uint delta, byte channel, short value) : base(delta)
+        public PitchWheelChangeEvent(double delta, byte channel, short value) : base(delta)
         {
             Channel = channel;
             Value = value;

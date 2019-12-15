@@ -20,7 +20,7 @@ namespace MIDIModificationFramework.MIDIEvents
         public byte Controller { get; set; }
         public byte Value { get; set; }
 
-        public ControlChangeEvent(uint delta, byte channel, byte controller, byte value) : base(delta)
+        public ControlChangeEvent(double delta, byte channel, byte controller, byte value) : base(delta)
         {
             Channel = channel;
             Controller = controller;

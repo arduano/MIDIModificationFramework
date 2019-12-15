@@ -9,7 +9,7 @@ namespace MIDIModificationFramework.MIDIEvents
     public class ChannelPrefixEvent : MIDIEvent
     {
         public byte Channel { get; set; }
-        public ChannelPrefixEvent(uint delta, byte channel) : base(delta)
+        public ChannelPrefixEvent(double delta, byte channel) : base(delta)
         {
             Channel = channel;
         }

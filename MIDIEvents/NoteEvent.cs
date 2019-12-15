@@ -19,7 +19,7 @@ namespace MIDIModificationFramework.MIDIEvents
         }
         public byte Key { get; set; }
 
-        public NoteEvent(uint delta, byte key) : base(delta)
+        public NoteEvent(double delta, byte key) : base(delta)
         {
             Channel = channel;
             Key = key;

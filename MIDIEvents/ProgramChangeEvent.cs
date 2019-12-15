@@ -19,7 +19,7 @@ namespace MIDIModificationFramework.MIDIEvents
         }
         public byte Program { get; set; }
 
-        public ProgramChangeEvent(uint delta, byte channel, byte program) : base(delta)
+        public ProgramChangeEvent(double delta, byte channel, byte program) : base(delta)
         {
             Channel = channel;
             Program = program;

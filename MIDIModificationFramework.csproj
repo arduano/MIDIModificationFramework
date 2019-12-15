@@ -43,9 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exceptions\CorruptChunkHeadersException.cs" />
+    <Compile Include="Extensions\EventSequenceExtensions.cs" />
+    <Compile Include="Extensions\NoteSequenceFunctions.cs" />
+    <Compile Include="Extensions\ThreadedSequenceFunctions.cs" />
     <Compile Include="FastList.cs" />
-    <Compile Include="Interfaces\IEventWriter.cs" />
+    <Compile Include="Logic\Mergers.cs" />
     <Compile Include="MIDIEvents\ChannelModeMessageEvent.cs" />
     <Compile Include="MIDIEvents\ChannelPrefixEvent.cs" />
     <Compile Include="MIDIEvents\ChannelPressureEvent.cs" />
@@ -80,19 +82,8 @@
     <Compile Include="ParallelStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EventParser.cs" />
-    <Compile Include="SequenceFunctions\CancelTempoEventsSequence.cs" />
-    <Compile Include="SequenceFunctions\EncodeNotes.cs" />
-    <Compile Include="SequenceFunctions\EventInjector.cs" />
-    <Compile Include="SequenceFunctions\EventSequence.cs" />
-    <Compile Include="SequenceFunctions\ExtractEventSequence.cs" />
-    <Compile Include="SequenceFunctions\ExtractNotes.cs" />
-    <Compile Include="SequenceFunctions\ForeachItem.cs" />
-    <Compile Include="SequenceFunctions\NoteSequence.cs" />
-    <Compile Include="SequenceFunctions\PPQChangeSequence.cs" />
-    <Compile Include="SequenceFunctions\Sequence.cs" />
-    <Compile Include="SequenceFunctions\TrackMerger.cs" />
-    <Compile Include="SequenceFunctions\TreeTrackMerger.cs" />
-    <Compile Include="TrackReader.cs" />
+    <Compile Include="Logic\NoteConversion.cs" />
+    <Compile Include="Logic\SequenceFunctions.cs" />
     <Compile Include="XZ.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

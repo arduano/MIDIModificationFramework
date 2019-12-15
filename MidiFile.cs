@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MIDIModificationFramework.MIDIEvents;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,12 +24,35 @@ namespace MIDIModificationFramework
 
         Stream reader;
 
-        public TrackReader GetTrack(int track)
+        public IEnumerable<MIDIEvent> GetTrackUnsafe(int track)
         {
-            return new TrackReader(() =>
+            var reader = new EventParser(TrackLocations[track], GetReaderStream());
+            while (!reader.Ended)
             {
-                return new EventParser(TrackLocations[track], GetReaderStream());
-            });
+                MIDIEvent ev;
+                ev = reader.ParseNextEvent();
+                if (ev == null) break;
+                yield return ev;
+            }
+        }
+
+        public IEnumerable<MIDIEvent> GetTrack(int track)
+        {
+            var reader = new EventParser(TrackLocations[track], GetReaderStream());
+            while (!reader.Ended)
+            {
+                MIDIEvent ev;
+                try
+                {
+                     ev = reader.ParseNextEvent();
+                }
+                catch
+                {
+                    break;
+                }
+                if (ev == null) break;
+                yield return ev;
+            }
         }
 
         string filepath;

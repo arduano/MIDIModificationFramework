@@ -10,17 +10,17 @@ namespace MIDIModificationFramework.MIDIEvents
     {
         byte[] data;
 
-        public MajorMidiMessageEvent(uint delta, byte command) : base(delta)
+        public MajorMidiMessageEvent(double delta, byte command) : base(delta)
         {
             data = new byte[] { command };
         }
 
-        public MajorMidiMessageEvent(uint delta, byte command, byte var1) : base(delta)
+        public MajorMidiMessageEvent(double delta, byte command, byte var1) : base(delta)
         {
             data = new byte[] { command, var1 };
         }
 
-        public MajorMidiMessageEvent(uint delta, byte command, byte var1, byte var2) : base(delta)
+        public MajorMidiMessageEvent(double delta, byte command, byte var1, byte var2) : base(delta)
         {
             data = new byte[] { command, var1, var2 };
         }

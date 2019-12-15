@@ -14,7 +14,7 @@ namespace MIDIModificationFramework.MIDIEvents
         public byte Frames { get; set; }
         public byte FractionalFrames { get; set; }
 
-        public SMPTEOffsetEvent(uint delta, byte hr, byte mn, byte se, byte fr, byte ff) : base(delta)
+        public SMPTEOffsetEvent(double delta, byte hr, byte mn, byte se, byte fr, byte ff) : base(delta)
         {
             Hours = hr;
             Minutes = mn;

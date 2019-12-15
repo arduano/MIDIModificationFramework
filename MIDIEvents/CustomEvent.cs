@@ -9,7 +9,7 @@ namespace MIDIModificationFramework.MIDIEvents
     public class CustomEvent : MIDIEvent
     {
         byte[] data;
-        public CustomEvent(uint delta, byte[] data) : base(delta)
+        public CustomEvent(double delta, byte[] data) : base(delta)
         {
             this.data = data;
         }

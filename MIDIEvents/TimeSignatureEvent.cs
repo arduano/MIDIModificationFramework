@@ -13,7 +13,7 @@ namespace MIDIModificationFramework.MIDIEvents
         public byte TicksPerClick { get; set; }
         public byte BB { get; set; }
 
-        public TimeSignatureEvent(uint delta, byte nn, byte dd, byte cc, byte bb) : base(delta)
+        public TimeSignatureEvent(double delta, byte nn, byte dd, byte cc, byte bb) : base(delta)
         {
             Numerator = nn;
             Denominator = dd;

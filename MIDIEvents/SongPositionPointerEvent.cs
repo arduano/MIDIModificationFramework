@@ -10,7 +10,7 @@ namespace MIDIModificationFramework.MIDIEvents
     {
         public ushort Location { get; set; }
 
-        public SongPositionPointerEvent(uint delta, ushort location) : base(delta)
+        public SongPositionPointerEvent(double delta, ushort location) : base(delta)
         {
             Location = location;
         }

@@ -11,7 +11,7 @@ namespace MIDIModificationFramework.MIDIEvents
         public byte SF { get; set; }
         public byte MI { get; set; }
 
-        public KeySignatureEvent(uint delta, byte sf, byte mi) : base(delta)
+        public KeySignatureEvent(double delta, byte sf, byte mi) : base(delta)
         {
             SF = sf;
             MI = mi;

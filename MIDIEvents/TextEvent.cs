@@ -47,13 +47,13 @@ namespace MIDIModificationFramework.MIDIEvents
 
         public TextEventType Type { get; set; }
 
-        public TextEvent(uint delta, TextEventType type, byte[] data) : base(delta)
+        public TextEvent(double delta, TextEventType type, byte[] data) : base(delta)
         {
             Type = type;
             Bytes = data;
         }
 
-        public TextEvent(uint delta, TextEventType type, string text) : base(delta)
+        public TextEvent(double delta, TextEventType type, string text) : base(delta)
         {
             Type = type;
             Bytes = data;

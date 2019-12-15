@@ -20,7 +20,7 @@ namespace MIDIModificationFramework.MIDIEvents
         public byte Key { get; set; }
         public byte Velocity { get; set; }
 
-        public PolyphonicKeyPressureEvent(uint delta, byte channel, byte key, byte velocity) : base(delta)
+        public PolyphonicKeyPressureEvent(double delta, byte channel, byte key, byte velocity) : base(delta)
         {
             Channel = channel;
             Key = key;

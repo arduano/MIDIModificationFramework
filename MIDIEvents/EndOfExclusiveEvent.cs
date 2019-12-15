@@ -8,7 +8,7 @@ namespace MIDIModificationFramework.MIDIEvents
 {
     public class EndOfExclusiveEvent : MIDIEvent
     {
-        public EndOfExclusiveEvent(uint delta) : base(delta) { }
+        public EndOfExclusiveEvent(double delta) : base(delta) { }
 
         public override MIDIEvent Clone()
         {

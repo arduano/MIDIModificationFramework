@@ -9,7 +9,7 @@ namespace MIDIModificationFramework.MIDIEvents
     public class MIDIPortEvent : MIDIEvent
     {
         public byte Channel { get; set; }
-        public MIDIPortEvent(uint delta, byte channel) : base(delta)
+        public MIDIPortEvent(double delta, byte channel) : base(delta)
         {
             Channel = channel;
         }

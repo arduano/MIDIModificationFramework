@@ -28,7 +28,7 @@ namespace MIDIModificationFramework.MIDIEvents
         public byte B2 { get; set; }
         public byte A2 { get; set; }
 
-        public ColorEvent(uint delta, byte r, byte g, byte b, byte a) : base(delta)
+        public ColorEvent(double delta, byte r, byte g, byte b, byte a) : base(delta)
         {
             R = r;
             G = g;
@@ -38,7 +38,7 @@ namespace MIDIModificationFramework.MIDIEvents
             gradients = false;
         }
 
-        public ColorEvent(uint delta, byte channel, byte r, byte g, byte b, byte a) : base(delta)
+        public ColorEvent(double delta, byte channel, byte r, byte g, byte b, byte a) : base(delta)
         {
             Channel = (byte)(channel % 16);
             R = r;
@@ -49,7 +49,7 @@ namespace MIDIModificationFramework.MIDIEvents
             gradients = false;
         }
 
-        public ColorEvent(uint delta, byte r, byte g, byte b, byte a, byte r2, byte g2, byte b2, byte a2) : base(delta)
+        public ColorEvent(double delta, byte r, byte g, byte b, byte a, byte r2, byte g2, byte b2, byte a2) : base(delta)
         {
             R = r;
             G = g;
@@ -63,7 +63,7 @@ namespace MIDIModificationFramework.MIDIEvents
             gradients = true;
         }
 
-        public ColorEvent(uint delta, byte channel, byte r, byte g, byte b, byte a, byte r2, byte g2, byte b2, byte a2) : base(delta)
+        public ColorEvent(double delta, byte channel, byte r, byte g, byte b, byte a, byte r2, byte g2, byte b2, byte a2) : base(delta)
         {
             Channel = (byte)(channel % 16);
 

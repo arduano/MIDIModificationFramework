@@ -10,7 +10,7 @@ namespace MIDIModificationFramework.MIDIEvents
     {
         public byte Song { get; set; }
 
-        public SongSelectEvent(uint delta, byte song) : base(delta)
+        public SongSelectEvent(double delta, byte song) : base(delta)
         {
             Song = song;
         }

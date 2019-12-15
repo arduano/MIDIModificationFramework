@@ -20,7 +20,7 @@ namespace MIDIModificationFramework.MIDIEvents
         public byte C { get; set; }
         public byte V { get; set; }
 
-        public ChannelModeMessageEvent(uint delta, byte channel, byte cc, byte vv) : base(delta)
+        public ChannelModeMessageEvent(double delta, byte channel, byte cc, byte vv) : base(delta)
         {
             Channel = channel;
             C = cc;

@@ -30,9 +30,23 @@ namespace MIDIModificationFramework
             writer.Write(data, 0, data.Length);
         }
 
+        public void Write(IEnumerable<MIDIEvent> seq)
+        {
+            foreach (var e in seq)
+            {
+                var data = e.GetDataWithDelta();
+                writer.Write(data, 0, data.Length);
+            }
+        }
+
         public void Write(byte[] data)
         {
             writer.Write(data, 0, data.Length);
+        }
+
+        public void Write(Stream data)
+        {
+            data.CopyTo(writer);
         }
 
         public void Write(ushort v)
@@ -48,6 +62,27 @@ namespace MIDIModificationFramework
         public void Write(byte v)
         {
             writer.WriteByte(v);
+        }
+
+        public void WriteTrack(IEnumerable<MIDIEvent> seq)
+        {
+            InitTrack();
+            Write(seq);
+            EndTrack();
+        }
+
+        public void WriteTrack(byte[] data)
+        {
+            InitTrack();
+            Write(data);
+            EndTrack();
+        }
+
+        public void WriteTrack(Stream data)
+        {
+            InitTrack();
+            Write(data);
+            EndTrack();
         }
 
         public void WriteVariableLen(int i)

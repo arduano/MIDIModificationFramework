@@ -8,7 +8,7 @@ namespace MIDIModificationFramework.MIDIEvents
 {
     public class TuneRequestEvent : MIDIEvent
     {
-        public TuneRequestEvent(uint delta) : base(delta) { }
+        public TuneRequestEvent(double delta) : base(delta) { }
 
         public override MIDIEvent Clone()
         {

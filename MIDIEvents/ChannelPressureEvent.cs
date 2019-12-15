@@ -19,7 +19,7 @@ namespace MIDIModificationFramework.MIDIEvents
         }
         public byte Pressure { get; set; }
 
-        public ChannelPressureEvent(uint delta, byte channel, byte pressure) : base(delta)
+        public ChannelPressureEvent(double delta, byte channel, byte pressure) : base(delta)
         {
             Channel = channel;
             Pressure = pressure;

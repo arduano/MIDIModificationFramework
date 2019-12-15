@@ -10,7 +10,7 @@ namespace MIDIModificationFramework.MIDIEvents
     {
         byte[] data;
 
-        public SystemExclusiveMessageEvent(uint delta, byte[] data) : base(delta)
+        public SystemExclusiveMessageEvent(double delta, byte[] data) : base(delta)
         {
             this.data = data;
         }

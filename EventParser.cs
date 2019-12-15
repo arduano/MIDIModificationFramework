@@ -95,8 +95,6 @@ namespace MIDIModificationFramework
         public MIDIEvent ParseNextEvent()
         {
             if (Ended) return null;
-            //try
-            //{
             uint delta = ReadVariableLen();
             TrackTime += delta;
             byte command = Read();
@@ -326,12 +324,6 @@ namespace MIDIModificationFramework
             {
                 throw new Exception("Corrupt Track");
             }
-            //}
-            //catch
-            //{
-            //    Ended = true;
-            //    return null;
-            //}
         }
 
         public void Dispose()
