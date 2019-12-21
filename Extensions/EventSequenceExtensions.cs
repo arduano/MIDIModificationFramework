@@ -71,6 +71,34 @@ namespace MIDIModificationFramework
             }
         }
 
+        public static IEnumerable<MIDIEvent> RemoveEvents(this IEnumerable<MIDIEvent> seq, IEnumerable<Type> types)
+        {
+            double delta = 0;
+            foreach (var e in seq)
+            {
+                bool extends = false;
+                foreach (var t in types)
+                {
+                    if (t.IsInstanceOfType(e))
+                    {
+                        extends = true;
+                        break;
+                    }
+                }
+                if (!extends)
+                {
+                    var ev = e.Clone();
+                    ev.DeltaTime += delta;
+                    delta = 0;
+                    yield return ev;
+                }
+                else
+                {
+                    delta += e.DeltaTime;
+                }
+            }
+        }
+
         public static IEnumerable<MIDIEvent> ChangePPQ(this IEnumerable<MIDIEvent> seq, double startPPQ, double endPPQ)
         {
             return SequenceFunctions.PPQChange(seq, startPPQ, endPPQ);
