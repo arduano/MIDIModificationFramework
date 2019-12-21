@@ -15,10 +15,13 @@ namespace MIDIModificationFramework
             int tempo = 500000;
             double lastDiff = 0;
 
+            newTempo = tempo * (tempo / newTempo);
+
             foreach (var _e in sequence)
             {
                 var e = _e.Clone();
-                e.DeltaTime = e.DeltaTime / newTempo * tempo;
+                e.DeltaTime = e.DeltaTime / newTempo * tempo + extraTicks;
+                extraTicks = 0;
                 if (e is TempoEvent)
                 {
                     var ev = e as TempoEvent;
