@@ -128,13 +128,5 @@ namespace MIDIModificationFramework
         {
             return NoteConversion.ExtractNotes(seq, otherEvents);
         }
-
-        public static IEnumerable<Note> WriteTo(this IEnumerable<MIDIEvent> seq, IEventWriter writer)
-        {
-            foreach(var e in seq)
-            {
-                writer.WriteEvent(e);
-            }
-        }
     }
 }
