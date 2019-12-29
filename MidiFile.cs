@@ -44,7 +44,7 @@ namespace MIDIModificationFramework
                 MIDIEvent ev;
                 try
                 {
-                     ev = reader.ParseNextEvent();
+                    ev = reader.ParseNextEvent();
                 }
                 catch
                 {
@@ -53,6 +53,11 @@ namespace MIDIModificationFramework
                 if (ev == null) break;
                 yield return ev;
             }
+        }
+
+        public IEnumerable<IEnumerable<MIDIEvent>> IterateTracks(int track)
+        {
+            for (int i = 0; i < TrackCount; i++) yield return GetTrack(i);
         }
 
         string filepath;
