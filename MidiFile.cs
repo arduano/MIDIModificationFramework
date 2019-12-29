@@ -55,7 +55,7 @@ namespace MIDIModificationFramework
             }
         }
 
-        public IEnumerable<IEnumerable<MIDIEvent>> IterateTracks(int track)
+        public IEnumerable<IEnumerable<MIDIEvent>> IterateTracks()
         {
             for (int i = 0; i < TrackCount; i++) yield return GetTrack(i);
         }
