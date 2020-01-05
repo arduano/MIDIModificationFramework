@@ -59,23 +59,17 @@ namespace MIDIModificationFramework
 
         uint ReadVariableLen()
         {
-            byte[] b = new byte[5];
-            byte c;
-            uint val = 0;
-            for (int i = 0; i < 4; i++)
+            long n = 0;
+            while (true)
             {
-                c = Read();
-                if (c > 0x7F)
+                byte curByte = Read();
+                n = (n << 7) | (byte)(curByte & 0x7F);
+                if ((curByte & 0x80) == 0)
                 {
-                    val = ((val << 7) | (byte)(c & 0x7F));
-                }
-                else
-                {
-                    val = val << 7 | c;
                     break;
                 }
             }
-            return val;
+            return (uint)n;
         }
 
         int pushback = -1;
