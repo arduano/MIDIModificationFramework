@@ -142,7 +142,7 @@ namespace MIDIModificationFramework
                     }
                     else
                     {
-                        batch2.Add(MergeSequences(batch1[pos], batch1[pos + 1]), noClone);
+                        batch2.Add(MergeSequences(batch1[pos], batch1[pos + 1], noClone));
                         pos += 2;
                     }
                 }
