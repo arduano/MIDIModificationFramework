@@ -9,14 +9,22 @@ namespace MIDIModificationFramework
 {
     public static class Mergers
     {
-        public static IEnumerable<MIDIEvent> MergeSequences(IEnumerable<MIDIEvent> sequence1, IEnumerable<MIDIEvent> sequence2)
+        public static IEnumerable<MIDIEvent> MergeSequences(IEnumerable<MIDIEvent> sequence1, IEnumerable<MIDIEvent> sequence2, bool noClone = false)
         {
             var enum1 = sequence1.GetEnumerator();
             var enum2 = sequence2.GetEnumerator();
             MIDIEvent e1 = null;
             MIDIEvent e2 = null;
-            if (enum1.MoveNext()) e1 = enum1.Current.Clone();
-            if (enum2.MoveNext()) e2 = enum2.Current.Clone();
+            if (noClone)
+            {
+                if (enum1.MoveNext()) e1 = enum1.Current;
+                if (enum2.MoveNext()) e2 = enum2.Current;
+            }
+            else
+            {
+                if (enum1.MoveNext()) e1 = enum1.Current.Clone();
+                if (enum2.MoveNext()) e2 = enum2.Current.Clone();
+            }
 
             while (true)
             {
@@ -28,21 +36,33 @@ namespace MIDIModificationFramework
                         {
                             e2.DeltaTime -= e1.DeltaTime;
                             yield return e1;
-                            if (enum1.MoveNext()) e1 = enum1.Current.Clone();
+                            if (enum1.MoveNext())
+                            {
+                                if (noClone) e1 = enum1.Current;
+                                else e1 = enum1.Current.Clone();
+                            }
                             else e1 = null;
                         }
                         else
                         {
                             e1.DeltaTime -= e2.DeltaTime;
                             yield return e2;
-                            if (enum2.MoveNext()) e2 = enum2.Current.Clone();
+                            if (enum2.MoveNext())
+                            {
+                                if (noClone) e2 = enum2.Current;
+                                else e2 = enum2.Current.Clone();
+                            }
                             else e2 = null;
                         }
                     }
                     else
                     {
                         yield return e1;
-                        if (enum1.MoveNext()) e1 = enum1.Current.Clone();
+                        if (enum1.MoveNext())
+                        {
+                            if (noClone) e1 = enum1.Current;
+                            else e1 = enum1.Current.Clone();
+                        }
                         else e1 = null;
                     }
                 }
@@ -50,7 +70,11 @@ namespace MIDIModificationFramework
                 {
                     if (e2 == null) break;
                     else yield return e2;
-                    if (enum2.MoveNext()) e2 = enum2.Current.Clone();
+                    if (enum2.MoveNext())
+                    {
+                        if (noClone) e2 = enum2.Current;
+                        else e2 = enum2.Current.Clone();
+                    }
                     else e2 = null;
                 }
             }
@@ -101,7 +125,7 @@ namespace MIDIModificationFramework
             }
         }
 
-        public static IEnumerable<MIDIEvent> MergeSequences(IEnumerable<IEnumerable<MIDIEvent>> sequences)
+        public static IEnumerable<MIDIEvent> MergeSequences(IEnumerable<IEnumerable<MIDIEvent>> sequences, bool noClone = false)
         {
             var batch1 = new List<IEnumerable<MIDIEvent>>();
             var batch2 = new List<IEnumerable<MIDIEvent>>();
@@ -118,7 +142,7 @@ namespace MIDIModificationFramework
                     }
                     else
                     {
-                        batch2.Add(MergeSequences(batch1[pos], batch1[pos + 1]));
+                        batch2.Add(MergeSequences(batch1[pos], batch1[pos + 1]), noClone);
                         pos += 2;
                     }
                 }
@@ -232,7 +256,7 @@ namespace MIDIModificationFramework
                         makeNextList();
                     }
 
-                    if(prevstart > lists[minid].Current.Start)
+                    if (prevstart > lists[minid].Current.Start)
                     { }
                     prevstart = lists[minid].Current.Start;
 
