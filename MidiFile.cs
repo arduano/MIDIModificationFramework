@@ -34,6 +34,7 @@ namespace MIDIModificationFramework
                 if (ev == null) break;
                 yield return ev;
             }
+            reader.Dispose();
         }
 
         public IEnumerable<MIDIEvent> GetTrack(int track)
@@ -53,6 +54,7 @@ namespace MIDIModificationFramework
                 if (ev == null) break;
                 yield return ev;
             }
+            reader.Dispose();
         }
 
         public IEnumerable<IEnumerable<MIDIEvent>> IterateTracks()

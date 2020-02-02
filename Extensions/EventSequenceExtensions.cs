@@ -19,6 +19,11 @@ namespace MIDIModificationFramework
             return SequenceFunctions.CancelTempoEvents(seq, newTempo, returnTempos);
         }
 
+        public static IEnumerable<MIDIEvent> RoundDeltas(this IEnumerable<MIDIEvent> seq)
+        {
+            return SequenceFunctions.RoundDeltas(seq);
+        }
+
         public static IEnumerable<MIDIEvent> InjectEvents(this IEnumerable<MIDIEvent> seq, Func<MIDIEvent> generator)
         {
             return SequenceFunctions.EventInjector(seq, generator);

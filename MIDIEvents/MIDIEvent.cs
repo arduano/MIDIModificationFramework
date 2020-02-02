@@ -52,9 +52,7 @@ namespace MIDIModificationFramework.MIDIEvents
 
         public byte[] GetDataWithDelta()
         {
-            int dt = (int)deltatime;
-            if ((int)(deltatime + 0.5) > dt) dt++;
-            return MakeVariableLenFast(dt).Concat(GetData()).ToArray();
+            return MakeVariableLenFast((int)Math.Round(DeltaTime)).Concat(GetData()).ToArray();
         }
 
         public abstract MIDIEvent Clone();
