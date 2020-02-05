@@ -78,14 +78,15 @@ namespace MIDIModificationFramework
 
         public static IEnumerable<MIDIEvent> RoundDeltas(IEnumerable<MIDIEvent> sequence)
         {
-            double excess = 0;
+            double time = 0;
+            double roundedtime = 0;
             foreach (var _e in sequence)
             {
                 var e = _e.Clone();
-                double newDelta = e.DeltaTime + excess;
-                double nextExcess = Math.Round(newDelta) - newDelta;
-                e.DeltaTime = Math.Round(newDelta);
-                excess = nextExcess;
+                time += e.DeltaTime;
+                var round = Math.Round(time);
+                e.DeltaTime = round - roundedtime;
+                roundedtime = round;
                 yield return e;
             }
         }

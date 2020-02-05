@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework.MIDIEvents
 {
-    public class PolyphonicKeyPressureEvent : MIDIEvent
+    public class PolyphonicKeyPressureEvent : NoteEvent
     {
         byte channel;
         public byte Channel
@@ -17,10 +17,9 @@ namespace MIDIModificationFramework.MIDIEvents
                 channel = (byte)(value & 0x0F);
             }
         }
-        public byte Key { get; set; }
         public byte Velocity { get; set; }
 
-        public PolyphonicKeyPressureEvent(double delta, byte channel, byte key, byte velocity) : base(delta)
+        public PolyphonicKeyPressureEvent(double delta, byte channel, byte key, byte velocity) : base(delta, key)
         {
             Channel = channel;
             Key = key;

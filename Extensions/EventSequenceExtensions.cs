@@ -24,14 +24,14 @@ namespace MIDIModificationFramework
             return SequenceFunctions.CancelTempoEvents(seq, 250000 / originalPPQ);
         }
 
-        public static IEnumerable<MIDIEvent> InjectEvents(this IEnumerable<MIDIEvent> seq, Func<MIDIEvent> generator)
-        {
-            return SequenceFunctions.EventInjector(seq, generator);
-        }
-
         public static IEnumerable<MIDIEvent> RoundDeltas(this IEnumerable<MIDIEvent> seq)
         {
             return SequenceFunctions.RoundDeltas(seq);
+        }
+
+        public static IEnumerable<MIDIEvent> InjectEvents(this IEnumerable<MIDIEvent> seq, Func<MIDIEvent> generator)
+        {
+            return SequenceFunctions.EventInjector(seq, generator);
         }
 
         public static IEnumerable<MIDIEvent> ExtractEvents(this IEnumerable<MIDIEvent> seq, Type type)

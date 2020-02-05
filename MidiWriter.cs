@@ -14,6 +14,8 @@ namespace MIDIModificationFramework
 
         long chunkStart = 0;
 
+        int tracks = 0;
+
         public MidiWriter(Stream writer)
         {
             this.writer = writer;
@@ -115,7 +117,7 @@ namespace MIDIModificationFramework
             writer.Position = pos;
         }
 
-        public void WriteNtrks(ushort s)
+        void WriteNtrks(ushort s)
         {
             long pos = writer.Position;
             writer.Position = 10;
@@ -123,7 +125,7 @@ namespace MIDIModificationFramework
             writer.Position = pos;
         }
 
-        public void WritePPQ(ushort s)
+        void WritePPQ(ushort s)
         {
             long pos = writer.Position;
             writer.Position = 12;
@@ -131,14 +133,14 @@ namespace MIDIModificationFramework
             writer.Position = pos;
         }
 
-        public void Init()
+        public void Init(ushort ppq)
         {
             writer.Position = 0;
             Write("MThd");
             Write((uint)6);
             WriteFormat(1);
             WriteNtrks(0);
-            WritePPQ(96);
+            WritePPQ(ppq);
         }
 
         public void InitTrack()
@@ -156,10 +158,13 @@ namespace MIDIModificationFramework
             writer.Position = chunkStart + 4;
             Write(len);
             writer.Position = writer.Length;
+            tracks++;
         }
 
         public void Close()
         {
+            if (tracks > 65535) tracks = 65535;
+            WriteNtrks((ushort)tracks);
             writer.Flush();
             writer.Close();
         }
