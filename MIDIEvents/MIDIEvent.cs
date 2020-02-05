@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MIDIModificationFramework.MIDIEvents
+namespace MIDIModificationFramework
 {
     public abstract class MIDIEvent
     {
@@ -52,6 +52,7 @@ namespace MIDIModificationFramework.MIDIEvents
 
         public byte[] GetDataWithDelta()
         {
+            if (DeltaTime < 0 || double.IsNaN(DeltaTime)) throw new Exception("Invalid delta time detected: " + DeltaTime);
             return MakeVariableLenFast((int)Math.Round(DeltaTime)).Concat(GetData()).ToArray();
         }
 

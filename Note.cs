@@ -9,11 +9,13 @@ namespace MIDIModificationFramework
     public class Note
     {
         double start;
+        double end;
+
         public double Start { get => start; set => start = value; }
         public byte Channel { get; set; }
         public byte Key { get; set; }
         public byte Velocity { get; set; }
-        double end;
+        
         public double End
         {
             get => end;
@@ -40,6 +42,11 @@ namespace MIDIModificationFramework
             this.end = end;
             this.Key = key;
             this.Velocity = vel;
+        }
+
+        public Note Clone()
+        {
+            return new Note(Channel, Key, Velocity, Start, End);
         }
     }
 }
