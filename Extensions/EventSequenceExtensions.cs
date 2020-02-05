@@ -19,9 +19,19 @@ namespace MIDIModificationFramework
             return SequenceFunctions.CancelTempoEvents(seq, newTempo, returnTempos);
         }
 
+        public static IEnumerable<MIDIEvent> MakeTimeBased(this IEnumerable<MIDIEvent> seq, double originalPPQ)
+        {
+            return SequenceFunctions.CancelTempoEvents(seq, 250000 / originalPPQ);
+        }
+
         public static IEnumerable<MIDIEvent> InjectEvents(this IEnumerable<MIDIEvent> seq, Func<MIDIEvent> generator)
         {
             return SequenceFunctions.EventInjector(seq, generator);
+        }
+
+        public static IEnumerable<MIDIEvent> RoundDeltas(this IEnumerable<MIDIEvent> seq)
+        {
+            return SequenceFunctions.RoundDeltas(seq);
         }
 
         public static IEnumerable<MIDIEvent> ExtractEvents(this IEnumerable<MIDIEvent> seq, Type type)
@@ -112,6 +122,11 @@ namespace MIDIModificationFramework
         public static IEnumerable<MIDIEvent> MergeWith(this IEnumerable<MIDIEvent> seq, IEnumerable<MIDIEvent> seq2)
         {
             return Mergers.MergeSequences(seq, seq2);
+        }
+
+        public static IEnumerable<MIDIEvent> MergeAll(this IEnumerable<IEnumerable<MIDIEvent>> seqs)
+        {
+            return Mergers.MergeSequences(seqs);
         }
 
         public static IEnumerable<MIDIEvent> MergeBuffer(this IEnumerable<MIDIEvent> seq, FastList<MIDIEvent> buffer)
