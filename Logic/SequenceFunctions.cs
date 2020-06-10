@@ -90,5 +90,24 @@ namespace MIDIModificationFramework
                 yield return e;
             }
         }
+
+        public static IEnumerable<MIDIEvent> FilterEvents(IEnumerable<MIDIEvent> sequence, Func<MIDIEvent, bool> func)
+        {
+            double extraDelta = 0;
+            foreach (var _e in sequence)
+            {
+                if (func(_e))
+                {
+                    var e = _e.Clone();
+                    e.DeltaTime += extraDelta;
+                    extraDelta = 0;
+                    yield return e;
+                }
+                else
+                {
+                    extraDelta += _e.DeltaTime;
+                }
+            }
+        }
     }
 }

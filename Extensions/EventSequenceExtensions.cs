@@ -143,5 +143,10 @@ namespace MIDIModificationFramework
         {
             return NoteConversion.ExtractNotes(seq, otherEvents);
         }
+
+        public static IEnumerable<MIDIEvent> FilterEvents(this IEnumerable<MIDIEvent> seq, Func<MIDIEvent, bool> select)
+        {
+            return SequenceFunctions.FilterEvents(seq, select);
+        }
     }
 }
