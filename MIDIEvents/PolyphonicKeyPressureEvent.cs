@@ -8,20 +8,10 @@ namespace MIDIModificationFramework.MIDIEvents
 {
     public class PolyphonicKeyPressureEvent : NoteEvent
     {
-        byte channel;
-        public byte Channel
-        {
-            get { return channel; }
-            set
-            {
-                channel = (byte)(value & 0x0F);
-            }
-        }
         public byte Velocity { get; set; }
 
-        public PolyphonicKeyPressureEvent(double delta, byte channel, byte key, byte velocity) : base(delta, key)
+        public PolyphonicKeyPressureEvent(double delta, byte channel, byte key, byte velocity) : base(delta, key, channel)
         {
-            Channel = channel;
             Key = key;
             Velocity = velocity;
         }

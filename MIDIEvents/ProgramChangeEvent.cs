@@ -6,22 +6,12 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework.MIDIEvents
 {
-    public class ProgramChangeEvent : MIDIEvent
+    public class ProgramChangeEvent : ChannelEvent
     {
-        byte channel;
-        public byte Channel
-        {
-            get { return channel; }
-            set
-            {
-                channel = (byte)(value & 0x0F);
-            }
-        }
         public byte Program { get; set; }
 
-        public ProgramChangeEvent(double delta, byte channel, byte program) : base(delta)
+        public ProgramChangeEvent(double delta, byte channel, byte program) : base(delta, channel)
         {
-            Channel = channel;
             Program = program;
         }
 

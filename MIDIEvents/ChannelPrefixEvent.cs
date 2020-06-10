@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework.MIDIEvents
 {
-    public class ChannelPrefixEvent : MIDIEvent
+    public class ChannelPrefixEvent : ChannelEvent
     {
-        public byte Channel { get; set; }
-        public ChannelPrefixEvent(double delta, byte channel) : base(delta)
+        public ChannelPrefixEvent(double delta, byte channel) : base(delta, channel)
         {
-            Channel = channel;
         }
 
         public override MIDIEvent Clone()

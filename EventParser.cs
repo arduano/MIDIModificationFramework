@@ -229,7 +229,7 @@ namespace MIDIModificationFramework
                         return new ColorEvent(delta, data[2], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11]);
                     }
                     else
-                        return new TextEvent(delta, (TextEventType)command, data);
+                        return new TextEvent(delta, command, data);
                 }
                 else if (command == 0x20)
                 {

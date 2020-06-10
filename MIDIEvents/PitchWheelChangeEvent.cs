@@ -6,18 +6,8 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework.MIDIEvents
 {
-    public class PitchWheelChangeEvent : MIDIEvent
+    public class PitchWheelChangeEvent : ChannelEvent
     {
-        byte channel;
-        public byte Channel
-        {
-            get { return channel; }
-            set
-            {
-                channel = (byte)(value & 0x0F);
-            }
-        }
-
         short value;
         public short Value
         {
@@ -30,9 +20,8 @@ namespace MIDIModificationFramework.MIDIEvents
             }
         }
 
-        public PitchWheelChangeEvent(double delta, byte channel, short value) : base(delta)
+        public PitchWheelChangeEvent(double delta, byte channel, short value) : base(delta, channel)
         {
-            Channel = channel;
             Value = value;
         }
 

@@ -70,6 +70,7 @@
     <Compile Include="Extensions\ThreadedSequenceFunctions.cs" />
     <Compile Include="FastList.cs" />
     <Compile Include="Logic\Mergers.cs" />
+    <Compile Include="MIDIEvents\ChannelEvent.cs" />
     <Compile Include="MIDIEvents\ChannelModeMessageEvent.cs" />
     <Compile Include="MIDIEvents\ChannelPrefixEvent.cs" />
     <Compile Include="MIDIEvents\ChannelPressureEvent.cs" />

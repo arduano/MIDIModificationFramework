@@ -6,22 +6,12 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework.MIDIEvents
 {
-    public class ChannelPressureEvent :MIDIEvent
+    public class ChannelPressureEvent : ChannelEvent
     {
-        byte channel;
-        public byte Channel
-        {
-            get { return channel; }
-            set
-            {
-                channel = (byte)(value & 0x0F);
-            }
-        }
         public byte Pressure { get; set; }
 
-        public ChannelPressureEvent(double delta, byte channel, byte pressure) : base(delta)
+        public ChannelPressureEvent(double delta, byte channel, byte pressure) : base(delta, channel)
         {
-            Channel = channel;
             Pressure = pressure;
         }
 

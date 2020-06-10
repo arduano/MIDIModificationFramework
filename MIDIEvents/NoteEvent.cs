@@ -6,22 +6,12 @@ using System.Threading.Tasks;
 
 namespace MIDIModificationFramework.MIDIEvents
 {
-    public abstract class NoteEvent : MIDIEvent
+    public abstract class NoteEvent : ChannelEvent
     {
-        byte channel;
-        public byte Channel
-        {
-            get { return channel; }
-            set
-            {
-                channel = (byte)(value & 0x0F);
-            }
-        }
         public byte Key { get; set; }
 
-        public NoteEvent(double delta, byte key) : base(delta)
+        public NoteEvent(double delta, byte key, byte channel) : base(delta, channel)
         {
-            Channel = channel;
             Key = key;
         }
     }

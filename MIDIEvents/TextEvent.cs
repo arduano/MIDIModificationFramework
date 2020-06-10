@@ -45,15 +45,15 @@ namespace MIDIModificationFramework.MIDIEvents
 
         public int Length => data.Length;
 
-        public TextEventType Type { get; set; }
+        public byte Type { get; set; }
 
-        public TextEvent(double delta, TextEventType type, byte[] data) : base(delta)
+        public TextEvent(double delta, byte type, byte[] data) : base(delta)
         {
             Type = type;
             Bytes = data;
         }
 
-        public TextEvent(double delta, TextEventType type, string text) : base(delta)
+        public TextEvent(double delta, byte type, string text) : base(delta)
         {
             Type = type;
             Bytes = data;
