@@ -9,12 +9,13 @@ namespace MIDIModificationFramework
 {
     public static class Mergers
     {
-        public static IEnumerable<MIDIEvent> MergeSequences(IEnumerable<MIDIEvent> sequence1, IEnumerable<MIDIEvent> sequence2, bool noClone = false)
+        public static IEnumerable<T> MergeSequences<T>(IEnumerable<T> sequence1, IEnumerable<T> sequence2, bool noClone = false)
+            where T : MIDIEvent
         {
             var enum1 = sequence1.GetEnumerator();
             var enum2 = sequence2.GetEnumerator();
-            MIDIEvent e1 = null;
-            MIDIEvent e2 = null;
+            T e1 = null;
+            T e2 = null;
             if (noClone)
             {
                 if (enum1.MoveNext()) e1 = enum1.Current;
@@ -22,8 +23,8 @@ namespace MIDIModificationFramework
             }
             else
             {
-                if (enum1.MoveNext()) e1 = enum1.Current.Clone();
-                if (enum2.MoveNext()) e2 = enum2.Current.Clone();
+                if (enum1.MoveNext()) e1 = enum1.Current.Clone() as T;
+                if (enum2.MoveNext()) e2 = enum2.Current.Clone() as T;
             }
 
             while (true)
@@ -39,7 +40,7 @@ namespace MIDIModificationFramework
                             if (enum1.MoveNext())
                             {
                                 if (noClone) e1 = enum1.Current;
-                                else e1 = enum1.Current.Clone();
+                                else e1 = enum1.Current.Clone() as T;
                             }
                             else e1 = null;
                         }
@@ -50,7 +51,7 @@ namespace MIDIModificationFramework
                             if (enum2.MoveNext())
                             {
                                 if (noClone) e2 = enum2.Current;
-                                else e2 = enum2.Current.Clone();
+                                else e2 = enum2.Current.Clone() as T;
                             }
                             else e2 = null;
                         }
@@ -61,7 +62,7 @@ namespace MIDIModificationFramework
                         if (enum1.MoveNext())
                         {
                             if (noClone) e1 = enum1.Current;
-                            else e1 = enum1.Current.Clone();
+                            else e1 = enum1.Current.Clone() as T;
                         }
                         else e1 = null;
                     }
@@ -73,19 +74,20 @@ namespace MIDIModificationFramework
                     if (enum2.MoveNext())
                     {
                         if (noClone) e2 = enum2.Current;
-                        else e2 = enum2.Current.Clone();
+                        else e2 = enum2.Current.Clone() as T;
                     }
                     else e2 = null;
                 }
             }
         }
 
-        public static IEnumerable<Note> MergeSequences(IEnumerable<Note> sequence1, IEnumerable<Note> sequence2)
+        public static IEnumerable<T> MergeSequences<T>(IEnumerable<T> sequence1, IEnumerable<T> sequence2)
+            where T : Note
         {
             var enum1 = sequence1.GetEnumerator();
             var enum2 = sequence2.GetEnumerator();
-            Note n1 = null;
-            Note n2 = null;
+            T n1 = null;
+            T n2 = null;
             if (enum1.MoveNext()) n1 = enum1.Current;
             if (enum2.MoveNext()) n2 = enum2.Current;
 
@@ -125,10 +127,11 @@ namespace MIDIModificationFramework
             }
         }
 
-        public static IEnumerable<MIDIEvent> MergeSequences(IEnumerable<IEnumerable<MIDIEvent>> sequences, bool noClone = false)
+        public static IEnumerable<T> MergeSequences<T>(IEnumerable<IEnumerable<T>> sequences, bool noClone = false)
+            where T : MIDIEvent
         {
-            var batch1 = new List<IEnumerable<MIDIEvent>>();
-            var batch2 = new List<IEnumerable<MIDIEvent>>();
+            var batch1 = new List<IEnumerable<T>>();
+            var batch2 = new List<IEnumerable<T>>();
             foreach (var s in sequences) batch1.Add(s);
             while (batch1.Count > 1)
             {
@@ -147,15 +150,16 @@ namespace MIDIModificationFramework
                     }
                 }
                 batch1 = batch2;
-                batch2 = new List<IEnumerable<MIDIEvent>>();
+                batch2 = new List<IEnumerable<T>>();
             }
             return batch1[0];
         }
 
-        public static IEnumerable<Note> MergeSequences(IEnumerable<IEnumerable<Note>> sequences)
+        public static IEnumerable<T> MergeSequences<T>(IEnumerable<IEnumerable<T>> sequences)
+            where T : Note
         {
-            var batch1 = new List<IEnumerable<Note>>();
-            var batch2 = new List<IEnumerable<Note>>();
+            var batch1 = new List<IEnumerable<T>>();
+            var batch2 = new List<IEnumerable<T>>();
             foreach (var s in sequences) batch1.Add(s);
             while (batch1.Count > 1)
             {
@@ -174,7 +178,7 @@ namespace MIDIModificationFramework
                     }
                 }
                 batch1 = batch2;
-                batch2 = new List<IEnumerable<Note>>();
+                batch2 = new List<IEnumerable<T>>();
             }
             return batch1[0];
         }
@@ -205,12 +209,13 @@ namespace MIDIModificationFramework
             }
         }
 
-        public static IEnumerable<Note> MergeManySequences(IEnumerable<IEnumerable<Note>> sequences)
+        public static IEnumerable<T> MergeManySequences<T>(IEnumerable<IEnumerable<T>> sequences)
+            where T : Note
         {
             bool mainEnded = false;
             var mainIter = sequences.GetEnumerator();
-            var lists = new List<IEnumerator<Note>>();
-            IEnumerator<Note> nextList = null;
+            var lists = new List<IEnumerator<T>>();
+            IEnumerator<T> nextList = null;
 
             double prevstart = -1;
 

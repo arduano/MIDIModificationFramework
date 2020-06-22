@@ -10,51 +10,37 @@ namespace MIDIModificationFramework
 {
     public class EventParser : IDisposable
     {
-        Stream reader;
-        long TrackTime { get; set; } = 0;
-
-        MidiFile.MidiChunkPointer pointer = null;
-        long start;
-        long end;
-
-        public double Progress
+        class StreamByteReader : IByteReader
         {
-            get
+            Stream stream;
+
+            public StreamByteReader(Stream s)
             {
-                try
-                {
-                    return (reader.Position - start) / (double)(end - start);
-                }
-                catch
-                {
-                    return 1;
-                }
+                stream = s;
+            }
+
+            public void Dispose() => stream.Dispose();
+            public byte Read()
+            {
+                int b = stream.ReadByte();
+                if (b == -1) throw new EndOfStreamException();
+                return (byte)b;
             }
         }
-        public long Size => end - start;
+
+        IByteReader reader;
+        long TrackTime { get; set; } = 0;
 
         public bool Ended { get; private set; } = false;
 
-        internal EventParser(MidiFile.MidiChunkPointer pointer, Stream reader)
+        internal EventParser(IByteReader reader)
         {
-            start = pointer.Start;
-            end = start + pointer.Length;
-            this.pointer = pointer;
             this.reader = reader;
-            reader.Position = start;
         }
 
         public EventParser(Stream reader)
         {
-            start = 0;
-            end = reader.Length;
-            this.reader = reader;
-            reader.Position = start;
-        }
-
-        public void Reset()
-        {
-            reader.Position = start;
+            this.reader = new StreamByteReader(reader);
         }
 
         uint ReadVariableLen()
@@ -81,8 +67,7 @@ namespace MIDIModificationFramework
                 pushback = -1;
                 return p;
             }
-            if (reader.Position >= end) throw new Exception("Corrupt Track");
-            return (byte)reader.ReadByte();
+            return reader.Read();
         }
 
         byte prevCommand;
@@ -215,7 +200,7 @@ namespace MIDIModificationFramework
                 {
                     int size = (int)ReadVariableLen();
                     var data = new byte[size];
-                    reader.Read(data, 0, size);
+                    for (int i = 0; i < size; i++) data[i] = Read();
                     if (command == 0x0A &&
                         (size == 8 || size == 12) &&
                         data[0] == 0x00 && data[1] == 0x0F &&

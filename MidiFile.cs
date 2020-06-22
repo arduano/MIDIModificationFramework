@@ -23,10 +23,18 @@ namespace MIDIModificationFramework
         internal MidiChunkPointer[] TrackLocations { get; private set; }
 
         Stream reader;
+        DiskReadProvider readProvider;
+
+        int readBufferSize = 100000;
+
+        public BufferByteReader GetTrackByteReader(int track)
+        {
+            return new BufferByteReader(readProvider, 100000, TrackLocations[track].Start, TrackLocations[track].Length);
+        }
 
         public IEnumerable<MIDIEvent> GetTrackUnsafe(int track)
         {
-            var reader = new EventParser(TrackLocations[track], GetReaderStream());
+            var reader = new EventParser(GetTrackByteReader(track));
             while (!reader.Ended)
             {
                 MIDIEvent ev;
@@ -39,7 +47,7 @@ namespace MIDIModificationFramework
 
         public IEnumerable<MIDIEvent> GetTrack(int track)
         {
-            var reader = new EventParser(TrackLocations[track], GetReaderStream());
+            var reader = new EventParser(GetTrackByteReader(track));
             while (!reader.Ended)
             {
                 MIDIEvent ev;
@@ -64,17 +72,9 @@ namespace MIDIModificationFramework
 
         string filepath;
 
-        BufferedStream GetBufferedReader()
+        public MidiFile(Stream stream, int readBufferSize)
         {
-            return new BufferedStream(File.Open(filepath, FileMode.Open, FileAccess.Read, FileShare.Read), 4096 * 256);
-        }
-
-        Func<Stream> GetReaderStream;
-
-        public MidiFile(Func<Stream> getStreamFunc)
-        {
-            GetReaderStream = getStreamFunc;
-            reader = GetReaderStream();
+            reader = stream;
             ParseHeaderChunk();
             List<MidiChunkPointer> tracks = new List<MidiChunkPointer>();
             while (reader.Position < reader.Length)
@@ -83,22 +83,17 @@ namespace MIDIModificationFramework
             }
             TrackLocations = tracks.ToArray();
             TrackCount = TrackLocations.Length;
+            readProvider = new DiskReadProvider(stream);
         }
 
-        public MidiFile(string filename)
-        {
-            filepath = filename;
-            GetReaderStream = GetBufferedReader;
-            reader = GetReaderStream();
-            ParseHeaderChunk();
-            List<MidiChunkPointer> tracks = new List<MidiChunkPointer>();
-            while (reader.Position < reader.Length)
-            {
-                ParseTrackChunk(tracks);
-            }
-            TrackLocations = tracks.ToArray();
-            TrackCount = TrackLocations.Length;
-        }
+        public MidiFile(Stream stream) : this(stream, 100000)
+        { }
+
+        public MidiFile(string filename, int readBufferSize) : this(File.Open(filename, FileMode.Open), readBufferSize)
+        { }
+
+        public MidiFile(string filename) : this(filename, 100000)
+        { }
 
         void AssertText(string text)
         {
@@ -135,8 +130,6 @@ namespace MIDIModificationFramework
             Format = ReadInt16();
             ReadInt16();
             PPQ = ReadInt16();
-            if (Format == 2) throw new Exception("Midi type 2 not supported");
-            if (PPQ < 0) throw new Exception("Division < 0 not supported");
         }
 
         void ParseTrackChunk(List<MidiChunkPointer> tracks)
@@ -145,7 +138,6 @@ namespace MIDIModificationFramework
             uint length = (uint)ReadInt32();
             tracks.Add(new MidiChunkPointer() { Start = reader.Position, Length = length });
             reader.Position += length;
-            Console.WriteLine("Track " + tracks.Count + ", Size " + length);
         }
 
         public void Dispose()

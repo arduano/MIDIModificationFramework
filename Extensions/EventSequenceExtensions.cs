@@ -34,14 +34,15 @@ namespace MIDIModificationFramework
             return SequenceFunctions.EventInjector(seq, generator);
         }
 
-        public static IEnumerable<MIDIEvent> ExtractEvents(this IEnumerable<MIDIEvent> seq, Type type)
+        public static IEnumerable<T> FilterEvents<T>(this IEnumerable<MIDIEvent> seq)
+            where T : MIDIEvent
         {
             double delta = 0;
             foreach (var e in seq)
             {
-                if (type.IsInstanceOfType(e))
+                if (e is T)
                 {
-                    var ev = e.Clone();
+                    var ev = e.Clone() as T;
                     ev.DeltaTime += delta;
                     delta = 0;
                     yield return ev;
@@ -53,7 +54,7 @@ namespace MIDIModificationFramework
             }
         }
 
-        public static IEnumerable<MIDIEvent> ExtractEvents(this IEnumerable<MIDIEvent> seq, IEnumerable<Type> types)
+        public static IEnumerable<MIDIEvent> FilterEvents(this IEnumerable<MIDIEvent> seq, IEnumerable<Type> types)
         {
             double delta = 0;
             foreach (var e in seq)
@@ -81,7 +82,8 @@ namespace MIDIModificationFramework
             }
         }
 
-        public static IEnumerable<MIDIEvent> RemoveEvents(this IEnumerable<MIDIEvent> seq, IEnumerable<Type> types)
+        public static IEnumerable<T> RemoveEvents<T>(this IEnumerable<T> seq, IEnumerable<Type> types)
+            where T : MIDIEvent
         {
             double delta = 0;
             foreach (var e in seq)
@@ -97,7 +99,7 @@ namespace MIDIModificationFramework
                 }
                 if (!extends)
                 {
-                    var ev = e.Clone();
+                    var ev = e.Clone() as T;
                     ev.DeltaTime += delta;
                     delta = 0;
                     yield return ev;
@@ -109,22 +111,26 @@ namespace MIDIModificationFramework
             }
         }
 
-        public static IEnumerable<MIDIEvent> ChangePPQ(this IEnumerable<MIDIEvent> seq, double startPPQ, double endPPQ)
+        public static IEnumerable<T> ChangePPQ<T>(this IEnumerable<T> seq, double startPPQ, double endPPQ)
+            where T : MIDIEvent
         {
             return SequenceFunctions.PPQChange(seq, startPPQ, endPPQ);
         }
 
-        public static IEnumerable<MIDIEvent> ChangePPQ(this IEnumerable<MIDIEvent> seq, double ppqMultiplier)
+        public static IEnumerable<T> ChangePPQ<T>(this IEnumerable<T> seq, double ppqMultiplier)
+            where T : MIDIEvent
         {
             return SequenceFunctions.PPQChange(seq, 1, ppqMultiplier);
         }
 
-        public static IEnumerable<MIDIEvent> MergeWith(this IEnumerable<MIDIEvent> seq, IEnumerable<MIDIEvent> seq2)
+        public static IEnumerable<T> MergeWith<T>(this IEnumerable<T> seq, IEnumerable<T> seq2)
+            where T : MIDIEvent
         {
             return Mergers.MergeSequences(seq, seq2);
         }
 
-        public static IEnumerable<MIDIEvent> MergeAll(this IEnumerable<IEnumerable<MIDIEvent>> seqs)
+        public static IEnumerable<T> MergeAll<T>(this IEnumerable<IEnumerable<T>> seqs)
+            where T : MIDIEvent
         {
             return Mergers.MergeSequences(seqs);
         }

@@ -18,5 +18,10 @@ namespace MIDIModificationFramework
         {
             return Mergers.MergeWithBuffer(NoteConversion.EncodeNotes(seq), buffer);
         }
+
+        public static IEnumerable<TrackNote> ToTrackNotes(this IEnumerable<Note> seq, int track)
+        {
+            return NoteConversion.ToTrackNotes(seq, track);
+        }
     }
 }

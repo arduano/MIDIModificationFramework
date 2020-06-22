@@ -56,33 +56,43 @@ namespace MIDIModificationFramework
             }
         }
 
-        public static IEnumerable<MIDIEvent> ExtractEvent<T>(IEnumerable<MIDIEvent> sequence)
+        public static IEnumerable<T> ExtractEvent<T>(IEnumerable<MIDIEvent> sequence)
             where T : MIDIEvent
         {
+            double delta = 0;
             foreach (var e in sequence)
             {
-                if (e is T) yield return e;
+                delta += e.DeltaTime;
+                if (e is T)
+                {
+                    var _e = e.Clone() as T;
+                    _e.DeltaTime = delta;
+                    delta = 0;
+                    yield return _e;
+                }
             }
         }
 
-        public static IEnumerable<MIDIEvent> PPQChange(IEnumerable<MIDIEvent> sequence, double startPPQ, double endPPQ)
+        public static IEnumerable<T> PPQChange<T>(IEnumerable<T> sequence, double startPPQ, double endPPQ)
+            where T : MIDIEvent
         {
             var ppqRatio = endPPQ / startPPQ;
             foreach (var _e in sequence)
             {
-                var e = _e.Clone();
+                var e = _e.Clone() as T;
                 e.DeltaTime *= ppqRatio;
                 yield return e;
             }
         }
 
-        public static IEnumerable<MIDIEvent> RoundDeltas(IEnumerable<MIDIEvent> sequence)
+        public static IEnumerable<T> RoundDeltas<T>(IEnumerable<T> sequence)
+            where T : MIDIEvent
         {
             double time = 0;
             double roundedtime = 0;
             foreach (var _e in sequence)
             {
-                var e = _e.Clone();
+                var e = _e.Clone() as T;
                 time += e.DeltaTime;
                 var round = Math.Round(time);
                 e.DeltaTime = round - roundedtime;
@@ -91,14 +101,15 @@ namespace MIDIModificationFramework
             }
         }
 
-        public static IEnumerable<MIDIEvent> FilterEvents(IEnumerable<MIDIEvent> sequence, Func<MIDIEvent, bool> func)
+        public static IEnumerable<T> FilterEvents<T>(IEnumerable<T> sequence, Func<T, bool> func)
+            where T : MIDIEvent
         {
             double extraDelta = 0;
             foreach (var _e in sequence)
             {
                 if (func(_e))
                 {
-                    var e = _e.Clone();
+                    var e = _e.Clone() as T;
                     e.DeltaTime += extraDelta;
                     extraDelta = 0;
                     yield return e;

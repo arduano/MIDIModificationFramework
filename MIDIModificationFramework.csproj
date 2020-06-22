@@ -65,10 +65,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BatchBlockingCollection.cs" />
+    <Compile Include="BufferByteReader.cs" />
     <Compile Include="Extensions\EventSequenceExtensions.cs" />
     <Compile Include="Extensions\NoteSequenceFunctions.cs" />
     <Compile Include="Extensions\ThreadedSequenceFunctions.cs" />
     <Compile Include="FastList.cs" />
+    <Compile Include="IByteReader.cs" />
     <Compile Include="Logic\Mergers.cs" />
     <Compile Include="MIDIEvents\ChannelEvent.cs" />
     <Compile Include="MIDIEvents\ChannelModeMessageEvent.cs" />
@@ -99,7 +102,6 @@
     <Compile Include="MIDIEvents\TuneRequestEvent.cs" />
     <Compile Include="MIDIEvents\UndefinedEvent.cs" />
     <Compile Include="MidiFile.cs" />
-    <Compile Include="MidiTrack.cs" />
     <Compile Include="MidiWriter.cs" />
     <Compile Include="Note.cs" />
     <Compile Include="ParallelStream.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="EventParser.cs" />
     <Compile Include="Logic\NoteConversion.cs" />
     <Compile Include="Logic\SequenceFunctions.cs" />
+    <Compile Include="TrackNote.cs" />
     <Compile Include="XZ.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -124,5 +124,10 @@ namespace MIDIModificationFramework
                 prevTime = e.time;
             }
         }
+
+        public static IEnumerable<TrackNote> ToTrackNotes(IEnumerable<Note> notes, int track)
+        {
+            foreach (var n in notes) yield return new TrackNote(track, n);
+        }
     }
 }
