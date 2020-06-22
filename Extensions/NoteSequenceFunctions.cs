@@ -23,5 +23,23 @@ namespace MIDIModificationFramework
         {
             return NoteConversion.ToTrackNotes(seq, track);
         }
+
+        public static IEnumerable<T> MergeAll<T>(this IEnumerable<IEnumerable<T>> seq)
+            where T : Note
+        {
+            return Mergers.MergeSequences(seq);
+        }
+
+        public static IEnumerable<T> MergeAllMany<T>(this IEnumerable<IEnumerable<T>> seq)
+            where T : Note
+        {
+            return Mergers.MergeManySequences(seq);
+        }
+
+        public static IEnumerable<T> MergeWith<T>(this IEnumerable<T> seq, IEnumerable<T> seq2)
+            where T : Note
+        {
+            return Mergers.MergeSequences(new[] { seq, seq2 });
+        }
     }
 }
