@@ -21,7 +21,7 @@ namespace MIDIModificationFramework
             this.writer = writer;
         }
 
-        public MidiWriter(string output) : this(File.Open(output, FileMode.Create))
+        public MidiWriter(string output) : this(new BufferedStream(File.Open(output, FileMode.Create)))
         { }
 
         public void Write(string text)

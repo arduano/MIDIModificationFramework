@@ -139,5 +139,47 @@ namespace MIDIModificationFramework
                 }
             }
         }
+
+        public static IEnumerable<T> TaskedThreadedBuffer<T>(this IEnumerable<T> seq, int maxBatches, int batchSize)
+        {
+            BatchBlockingCollection<T> buffer = new BatchBlockingCollection<T>(batchSize);
+
+            Task readerTask = null;
+
+            bool completed = false;
+
+            var en = seq.GetEnumerator();
+
+            Action runReader = () =>
+            {
+                if (readerTask != null) readerTask.GetAwaiter().GetResult();
+                if (completed) return;
+                readerTask = Task.Run(() =>
+                {
+                    while (buffer.BatchCount < maxBatches)
+                    {
+                        if (!en.MoveNext())
+                        {
+                            completed = true;
+                            buffer.Complete();
+                            return;
+                        }
+                        buffer.Add(en.Current);
+                    }
+                    readerTask = null;
+                });
+            };
+
+            runReader();
+
+            foreach (var t in buffer)
+            {
+                yield return t;
+                if (buffer.BatchCount < maxBatches / 2 || buffer.BatchCount == 0)
+                {
+                    if (!completed) runReader();
+                }
+            }
+        }
     }
 }
