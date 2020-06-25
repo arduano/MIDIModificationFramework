@@ -8,43 +8,50 @@ namespace MIDIModificationFramework
 {
     public class Note
     {
-        double start;
-        double end;
+        double length;
 
-        public double Start { get => start; set => start = value; }
+        public double Start { get; set; }
         public byte Channel { get; set; }
         public byte Key { get; set; }
         public byte Velocity { get; set; }
         
         public double End
         {
-            get => end;
+            get => Start + length;
             set
             {
-                if (value < start) throw new ArgumentException("Note end can not be less than start");
-                end = value;
+                Length = value - Start;
             }
         }
 
         public double Length
         {
-            get => end - start;
+            get => length;
             set
             {
-                end = start + value;
+                if (value < -0.00000001) 
+                    throw new ArgumentException("Note can not have a negative length");
+                length = value;
             }
+        }
+
+        public void SetStartOnly(double newStart)
+        {
+            double newLength = End - newStart;
+            Start = newStart;
+            Length = newLength;
         }
 
         public Note(byte channel, byte key, byte vel, double start, double end)
         {
             Channel = channel;
-            this.start = start;
-            this.end = end;
+            this.Start = start;
+            this.Length = end - start;
             this.Key = key;
             this.Velocity = vel;
         }
 
-        public Note Clone()
+        public virtual Note Clone()
         {
             return new Note(Channel, Key, Velocity, Start, End);
         }

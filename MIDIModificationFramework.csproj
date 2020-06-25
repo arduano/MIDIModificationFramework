@@ -71,6 +71,14 @@
     <Compile Include="Extensions\NoteSequenceFunctions.cs" />
     <Compile Include="Extensions\ThreadedSequenceFunctions.cs" />
     <Compile Include="FastList.cs" />
+    <Compile Include="Generator\EventSequenceExtensions.cs" />
+    <Compile Include="Generator\Fields.cs" />
+    <Compile Include="Generator\Keep.cs" />
+    <Compile Include="Generator\Lines.cs" />
+    <Compile Include="Generator\Loop.cs" />
+    <Compile Include="Generator\MathHelper.cs" />
+    <Compile Include="Generator\NoteSequenceExtensions.cs" />
+    <Compile Include="Generator\TransformExtensions.cs" />
     <Compile Include="IByteReader.cs" />
     <Compile Include="Logic\Mergers.cs" />
     <Compile Include="MIDIEvents\ChannelEvent.cs" />
@@ -112,5 +120,6 @@
     <Compile Include="TrackNote.cs" />
     <Compile Include="XZ.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

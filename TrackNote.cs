@@ -17,5 +17,10 @@ namespace MIDIModificationFramework
 
         public TrackNote(int track, Note n) : this(track, n.Channel, n.Key, n.Velocity, n.Start, n.End)
         { }
+
+        public override Note Clone()
+        {
+            return new TrackNote(Track, Channel, Key, Velocity, Start, End);
+        }
     }
 }

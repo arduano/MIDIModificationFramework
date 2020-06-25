@@ -129,7 +129,7 @@ namespace MIDIModificationFramework
             return Mergers.MergeSequences(seq, seq2);
         }
 
-        public static IEnumerable<T> MergeAll<T>(this IEnumerable<IEnumerable<T>> seqs)
+        public static IEnumerable<T> MergeAllTracks<T>(this IEnumerable<IEnumerable<T>> seqs)
             where T : MIDIEvent
         {
             return Mergers.MergeSequences(seqs);

@@ -20,6 +20,8 @@ namespace MIDIModificationFramework
 
         int batchSize = 1000;
 
+        public int BatchCount => data.Count;
+
         public BatchBlockingCollection() : this(1000)
         { }
 

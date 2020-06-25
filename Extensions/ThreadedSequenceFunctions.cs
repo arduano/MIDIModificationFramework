@@ -55,9 +55,9 @@ namespace MIDIModificationFramework
                 }
             }
         }
-        public static IEnumerable<T> ConstantThreadedBuffer<T>(this IEnumerable<T> seq, int maxSize, int batchSize)
+        public static IEnumerable<T> ConstantThreadedBuffer<T>(this IEnumerable<T> seq, int maxBatches, int batchSize)
         {
-            BatchBlockingCollection<T> buffer = new BatchBlockingCollection<T>(batchSize);
+            BatchBlockingCollection<T> buffer = new BatchBlockingCollection<T>(maxBatches, batchSize);
 
             CancellationTokenSource cancel = new CancellationTokenSource();
 
@@ -124,6 +124,7 @@ namespace MIDIModificationFramework
             void cancelAndWait()
             {
                 cancel.Cancel();
+                buffer.CompleteAdding();
                 readerTask?.Wait();
             }
 
@@ -150,6 +151,8 @@ namespace MIDIModificationFramework
 
             var en = seq.GetEnumerator();
 
+            CancellationTokenSource cancel = new CancellationTokenSource();
+
             Action runReader = () =>
             {
                 if (readerTask != null) readerTask.GetAwaiter().GetResult();
@@ -158,13 +161,22 @@ namespace MIDIModificationFramework
                 {
                     while (buffer.BatchCount < maxBatches)
                     {
-                        if (!en.MoveNext())
+                        if (cancel.IsCancellationRequested) break;
+                        try
                         {
-                            completed = true;
-                            buffer.Complete();
-                            return;
+                            if (!en.MoveNext())
+                            {
+                                completed = true;
+                                buffer.Complete();
+                                return;
+                            }
                         }
-                        buffer.Add(en.Current);
+                        catch
+                        {
+                            buffer.Complete();
+                            cancel.Cancel();
+                        }
+                        buffer.Add(en.Current, cancel.Token);
                     }
                     readerTask = null;
                 });
@@ -172,12 +184,23 @@ namespace MIDIModificationFramework
 
             runReader();
 
-            foreach (var t in buffer)
+
+            void cancelAndWait()
             {
-                yield return t;
-                if (buffer.BatchCount < maxBatches / 2 || buffer.BatchCount == 0)
+                cancel.Cancel();
+                buffer.Complete();
+                readerTask?.Wait();
+            }
+
+            using (new DisposeAction(cancelAndWait))
+            {
+                foreach (var t in buffer)
                 {
-                    if (!completed) runReader();
+                    yield return t;
+                    if (buffer.BatchCount < maxBatches / 2 || buffer.BatchCount == 0)
+                    {
+                        if (!completed) runReader();
+                    }
                 }
             }
         }
