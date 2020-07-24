@@ -12,6 +12,8 @@ namespace MIDIModificationFramework
     {
         BlockingCollection<FastList<T>> data;
 
+        public int BatchCount => data.Count;
+
         public bool IsComplete { get; private set; }
 
         FastList<T> buffer = new FastList<T>();

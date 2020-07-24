@@ -28,9 +28,9 @@ namespace MIDIModificationFramework
                 yield return t;
             }
         }
-        public static IEnumerable<T> ConstantThreadedBuffer<T>(this IEnumerable<T> seq, int maxSize, int batchSize)
+        public static IEnumerable<T> ConstantThreadedBuffer<T>(this IEnumerable<T> seq, int maxBatches, int batchSize)
         {
-            BatchBlockingCollection<T> buffer = new BatchBlockingCollection<T>(batchSize);
+            BatchBlockingCollection<T> buffer = new BatchBlockingCollection<T>(maxBatches, batchSize);
 
             Task.Run(() =>
             {
