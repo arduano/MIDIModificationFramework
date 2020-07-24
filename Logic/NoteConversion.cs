@@ -36,7 +36,7 @@ namespace MIDIModificationFramework
                     var n = e as NoteOnEvent;
                     var note = new DecodedNote()
                     {
-                        note = new Note(n.Channel, n.Key, n.Velocity, time, 0)
+                        note = new Note(n.Channel, n.Key, n.Velocity, time, double.PositiveInfinity)
                     };
                     unendedNotes[n.Key * 16 + n.Channel].Add(note);
                     notesQueue.Add(note);

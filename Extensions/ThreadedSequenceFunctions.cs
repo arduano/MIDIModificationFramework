@@ -10,40 +10,79 @@ namespace MIDIModificationFramework
 {
     public static class ThreadedSequenceFunctions
     {
+        class DisposeAction : IDisposable
+        {
+            Action disposeAction;
+
+            public DisposeAction(Action action)
+            {
+                disposeAction = action;
+            }
+
+            public void Dispose()
+            {
+                disposeAction();
+            }
+        }
+
         public static IEnumerable<T> ConstantThreadedBuffer<T>(this IEnumerable<T> seq, int maxSize)
         {
             BlockingCollection<T> buffer = new BlockingCollection<T>(maxSize);
 
-            Task.Run(() =>
+            CancellationTokenSource cancel = new CancellationTokenSource();
+
+            var runner = Task.Run(() =>
             {
                 foreach (var t in seq)
                 {
+                    if (cancel.IsCancellationRequested) break;
                     buffer.Add(t);
                 }
                 buffer.CompleteAdding();
             });
 
-            foreach (var t in buffer.GetConsumingEnumerable())
+            void cancelAndWait()
             {
-                yield return t;
+                cancel.Cancel();
+                runner.Wait();
+            }
+
+            using (new DisposeAction(cancelAndWait))
+            {
+                foreach (var t in buffer.GetConsumingEnumerable())
+                {
+                    yield return t;
+                }
             }
         }
         public static IEnumerable<T> ConstantThreadedBuffer<T>(this IEnumerable<T> seq, int maxBatches, int batchSize)
         {
             BatchBlockingCollection<T> buffer = new BatchBlockingCollection<T>(maxBatches, batchSize);
 
-            Task.Run(() =>
+            CancellationTokenSource cancel = new CancellationTokenSource();
+
+            var runner = Task.Run(() =>
             {
                 foreach (var t in seq)
                 {
-                    buffer.Add(t);
+                    if (cancel.IsCancellationRequested) break;
+                    buffer.Add(t, cancel.Token);
                 }
                 buffer.Complete();
             });
 
-            foreach (var t in buffer)
+            void cancelAndWait()
             {
-                yield return t;
+                cancel.Cancel();
+                runner.Wait();
+            }
+
+            using (new DisposeAction(cancelAndWait))
+            {
+                foreach (var t in buffer)
+                {
+                    yield return t;
+                }
             }
         }
 
@@ -57,21 +96,24 @@ namespace MIDIModificationFramework
 
             var en = seq.GetEnumerator();
 
+            CancellationTokenSource cancel = new CancellationTokenSource();
+
             Action runReader = () =>
             {
-                if (readerTask != null) readerTask.GetAwaiter().GetResult();
+                if (readerTask != null) readerTask.Wait();
                 if (completed) return;
                 readerTask = Task.Run(() =>
                 {
                     while (buffer.Count < maxSize)
                     {
+                        if (cancel.IsCancellationRequested) break;
                         if (!en.MoveNext())
                         {
                             completed = true;
                             buffer.CompleteAdding();
                             return;
                         }
-                        buffer.Add(en.Current);
+                        buffer.Add(en.Current, cancel.Token);
                     }
                     readerTask = null;
                 });
@@ -79,12 +121,22 @@ namespace MIDIModificationFramework
 
             runReader();
 
-            foreach (var t in buffer.GetConsumingEnumerable())
+            void cancelAndWait()
             {
-                yield return t;
-                if (buffer.Count < maxSize / 2 || buffer.Count == 0)
+                cancel.Cancel();
+                buffer.CompleteAdding();
+                readerTask?.Wait();
+            }
+
+            using (new DisposeAction(cancelAndWait))
+            {
+                foreach (var t in buffer.GetConsumingEnumerable())
                 {
-                    if (!completed) runReader();
+                    yield return t;
+                    if (buffer.Count < maxSize / 2 || buffer.Count == 0)
+                    {
+                        if (!completed) runReader();
+                    }
                 }
             }
         }
@@ -99,6 +151,8 @@ namespace MIDIModificationFramework
 
             var en = seq.GetEnumerator();
 
+            CancellationTokenSource cancel = new CancellationTokenSource();
+
             Action runReader = () =>
             {
                 if (readerTask != null) readerTask.GetAwaiter().GetResult();
@@ -107,13 +161,22 @@ namespace MIDIModificationFramework
                 {
                     while (buffer.BatchCount < maxBatches)
                     {
-                        if (!en.MoveNext())
+                        if (cancel.IsCancellationRequested) break;
+                        try
                         {
-                            completed = true;
-                            buffer.Complete();
-                            return;
+                            if (!en.MoveNext())
+                            {
+                                completed = true;
+                                buffer.Complete();
+                                return;
+                            }
                         }
-                        buffer.Add(en.Current);
+                        catch
+                        {
+                            buffer.Complete();
+                            cancel.Cancel();
+                        }
+                        buffer.Add(en.Current, cancel.Token);
                     }
                     readerTask = null;
                 });
@@ -121,12 +184,23 @@ namespace MIDIModificationFramework
 
             runReader();
 
-            foreach (var t in buffer)
+
+            void cancelAndWait()
             {
-                yield return t;
-                if (buffer.BatchCount < maxBatches / 2 || buffer.BatchCount == 0)
+                cancel.Cancel();
+                buffer.Complete();
+                readerTask?.Wait();
+            }
+
+            using (new DisposeAction(cancelAndWait))
+            {
+                foreach (var t in buffer)
                 {
-                    if (!completed) runReader();
+                    yield return t;
+                    if (buffer.BatchCount < maxBatches / 2 || buffer.BatchCount == 0)
+                    {
+                        if (!completed) runReader();
+                    }
                 }
             }
         }

@@ -41,5 +41,45 @@ namespace MIDIModificationFramework
         {
             return Mergers.MergeSequences(new[] { seq, seq2 });
         }
+
+        public static IEnumerable<T> TrimStart<T>(this IEnumerable<T> seq)
+            where T : Note => TrimStart(seq, 0);
+        public static IEnumerable<T> TrimStart<T>(this IEnumerable<T> seq, double time)
+            where T : Note
+        {
+            foreach (var n in seq)
+            {
+                if (n.End < time) continue;
+                if (n.Start < time)
+                {
+                    var nc = n.Clone() as T;
+                    nc.SetStartOnly(time);
+                    yield return nc;
+                }
+                else
+                {
+                    yield return n;
+                }
+            }
+        }
+
+        public static IEnumerable<T> TrimEnd<T>(this IEnumerable<T> seq, double time)
+            where T : Note
+        {
+            foreach (var n in seq)
+            {
+                if (n.Start > time) continue;
+                if (n.End > time)
+                {
+                    var nc = n.Clone() as T;
+                    nc.End = time;
+                    yield return nc;
+                }
+                else
+                {
+                    yield return n;
+                }
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MIDIModificationFramework
@@ -31,6 +32,19 @@ namespace MIDIModificationFramework
         {
             this.batchSize = batchSize;
             data = new BlockingCollection<FastList<T>>(maxBatches);
+        }
+
+        public void Add(T item, CancellationToken cancel)
+        {
+            if (IsComplete) throw new ObjectDisposedException("Already completed adding");
+            buffer.Add(item);
+            currentBatchSize++;
+            if (currentBatchSize >= batchSize)
+            {
+                data.Add(buffer, cancel);
+                buffer = new FastList<T>();
+                currentBatchSize = 0;
+            }
         }
 
         public void Add(T item)
