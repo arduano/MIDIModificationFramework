@@ -36,7 +36,8 @@ namespace MIDIModificationFramework
 
         public void Add(T item, CancellationToken cancel)
         {
-            if (IsComplete) throw new ObjectDisposedException("Already completed adding");
+            if (IsComplete) 
+                throw new ObjectDisposedException("Already completed adding");
             buffer.Add(item);
             currentBatchSize++;
             if (currentBatchSize >= batchSize)

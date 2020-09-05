@@ -97,6 +97,8 @@ namespace MIDIModificationFramework
             var en = seq.GetEnumerator();
 
             CancellationTokenSource cancel = new CancellationTokenSource();
+           
+            Exception e = null;
 
             Action runReader = () =>
             {
@@ -107,13 +109,22 @@ namespace MIDIModificationFramework
                     while (buffer.Count < maxSize)
                     {
                         if (cancel.IsCancellationRequested) break;
-                        if (!en.MoveNext())
+                        try
                         {
-                            completed = true;
-                            buffer.CompleteAdding();
-                            return;
+                            if (!en.MoveNext())
+                            {
+                                completed = true;
+                                buffer.CompleteAdding();
+                                return;
+                            }
+                            buffer.Add(en.Current, cancel.Token);
                         }
-                        buffer.Add(en.Current, cancel.Token);
+                        catch (Exception ex)
+                        {
+                            buffer.CompleteAdding();
+                            cancel.Cancel();
+                            e = ex;
+                        }
                     }
                     readerTask = null;
                 });
@@ -138,6 +149,7 @@ namespace MIDIModificationFramework
                         if (!completed) runReader();
                     }
                 }
+                if (e != null) throw e;
             }
         }
 
@@ -152,6 +164,8 @@ namespace MIDIModificationFramework
             var en = seq.GetEnumerator();
 
             CancellationTokenSource cancel = new CancellationTokenSource();
+
+            Exception e = null;
 
             Action runReader = () =>
             {
@@ -170,13 +184,14 @@ namespace MIDIModificationFramework
                                 buffer.Complete();
                                 return;
                             }
+                            buffer.Add(en.Current, cancel.Token);
                         }
-                        catch
+                        catch (Exception ex)
                         {
                             buffer.Complete();
                             cancel.Cancel();
+                            e = ex;
                         }
-                        buffer.Add(en.Current, cancel.Token);
                     }
                     readerTask = null;
                 });
@@ -202,6 +217,7 @@ namespace MIDIModificationFramework
                         if (!completed) runReader();
                     }
                 }
+                if (e != null) throw e;
             }
         }
     }
