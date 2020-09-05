@@ -40,7 +40,8 @@ namespace MIDIModificationFramework.MIDIEvents
 
         public ColorEvent(double delta, byte channel, byte r, byte g, byte b, byte a) : base(delta)
         {
-            Channel = (byte)(channel % 16);
+            if (channel == 0x7f) Channel = 0x7f;
+            else Channel = (byte)(channel % 16);
             R = r;
             G = g;
             B = b;
@@ -65,7 +66,8 @@ namespace MIDIModificationFramework.MIDIEvents
 
         public ColorEvent(double delta, byte channel, byte r, byte g, byte b, byte a, byte r2, byte g2, byte b2, byte a2) : base(delta)
         {
-            Channel = (byte)(channel % 16);
+            if (channel == 0x7f) Channel = 0x7f;
+            else Channel = (byte)(channel % 16);
 
             R = r;
             G = g;
@@ -79,9 +81,26 @@ namespace MIDIModificationFramework.MIDIEvents
             gradients = true;
         }
 
+        private ColorEvent(double delta, byte channel, byte r, byte g, byte b, byte a, byte r2, byte g2, byte b2, byte a2, bool gradients) : base(delta)
+        {
+            if (channel == 0x7f) Channel = 0x7f;
+            else Channel = (byte)(channel % 16);
+
+            R = r;
+            G = g;
+            B = b;
+            A = a;
+            R2 = r2;
+            G2 = g2;
+            B2 = b2;
+            A2 = a2;
+
+            this.gradients = gradients;
+        }
+
         public override MIDIEvent Clone()
         {
-            return new ColorEvent(DeltaTime, Channel, R, G, B, A, R2, G2, B2, A2);
+            return new ColorEvent(DeltaTime, Channel, R, G, B, A, R2, G2, B2, A2, gradients);
         }
 
         public override byte[] GetData()
