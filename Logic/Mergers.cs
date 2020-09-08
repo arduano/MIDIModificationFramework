@@ -133,6 +133,7 @@ namespace MIDIModificationFramework
             var batch1 = new List<IEnumerable<T>>();
             var batch2 = new List<IEnumerable<T>>();
             foreach (var s in sequences) batch1.Add(s);
+            if (batch1.Count == 0) return new T[0];
             while (batch1.Count > 1)
             {
                 int pos = 0;
@@ -161,6 +162,7 @@ namespace MIDIModificationFramework
             var batch1 = new List<IEnumerable<T>>();
             var batch2 = new List<IEnumerable<T>>();
             foreach (var s in sequences) batch1.Add(s);
+            if (batch1.Count == 0) return new T[0];
             while (batch1.Count > 1)
             {
                 int pos = 0;
