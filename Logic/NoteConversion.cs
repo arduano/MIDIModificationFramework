@@ -81,14 +81,15 @@ namespace MIDIModificationFramework
 
         public static IEnumerable<MIDIEvent> EncodeNotes(IEnumerable<Note> sequence)
         {
-            FastList<UnplacedNoteOff> noteOffs = new FastList<UnplacedNoteOff>();
+            List<UnplacedNoteOff> noteOffs = new List<UnplacedNoteOff>();
             double prevTime = 0;
 
             foreach (var n in sequence)
             {
-                while (!noteOffs.ZeroLen && noteOffs.First.time <= n.Start)
+                while (noteOffs.Count != 0 && noteOffs[0].time <= n.Start)
                 {
-                    var e = noteOffs.Pop();
+                    var e = noteOffs[0];
+                    noteOffs.RemoveAt(0);
                     e.e.DeltaTime = e.time - prevTime;
                     yield return e.e;
                     prevTime = e.time;
@@ -96,29 +97,43 @@ namespace MIDIModificationFramework
 
                 yield return new NoteOnEvent(n.Start - prevTime, n.Channel, n.Key, n.Velocity);
                 prevTime = n.Start;
-                var iter = noteOffs.Iterate();
                 var time = n.End;
                 var off = new UnplacedNoteOff() { e = new NoteOffEvent(0, n.Channel, n.Key), time = time };
-                bool notAdded = true;
-                UnplacedNoteOff u;
-                while (iter.MoveNext(out u))
+                var pos = noteOffs.Count / 2;
+                if (noteOffs.Count == 0) noteOffs.Add(off);
+                else
                 {
-                    if (u.time > time)
+                    // binary search
+                    for (int jump = noteOffs.Count / 4; ; jump /= 2)
                     {
-                        iter.Insert(off);
-                        notAdded = false;
-                        break;
+                        if (jump <= 0) jump = 1;
+                        if (pos < 0) pos = 0;
+                        if (pos >= noteOffs.Count) pos = noteOffs.Count - 1;
+                        var u = noteOffs[pos];
+                        if (u.time >= time)
+                        {
+                            if (pos == 0 || noteOffs[pos - 1].time < time)
+                            {
+                                noteOffs.Insert(pos, off);
+                                break;
+                            }
+                            else pos -= jump;
+                        }
+                        else
+                        {
+                            if (pos == noteOffs.Count - 1)
+                            {
+                                noteOffs.Add(off);
+                                break;
+                            }
+                            else pos += jump;
+                        }
                     }
-                }
-                if (notAdded)
-                {
-                    noteOffs.Add(off);
                 }
             }
 
-            while (!noteOffs.ZeroLen)
+            foreach (var e in noteOffs)
             {
-                var e = noteOffs.Pop();
                 e.e.DeltaTime = e.time - prevTime;
                 yield return e.e;
                 prevTime = e.time;
