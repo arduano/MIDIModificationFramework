@@ -27,10 +27,10 @@ namespace MIDIModificationFramework.MIDIEvents
 
         public string Text
         {
-            get => new string(data.Cast<char>().ToArray());
+            get => new string(data.Select(b => (char)b).ToArray());
             set
             {
-                data = value.ToArray().Cast<byte>().ToArray();
+                data = value.ToArray().Select(c => (byte)c).ToArray();
             }
         }
 
