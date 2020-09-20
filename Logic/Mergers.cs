@@ -33,7 +33,7 @@ namespace MIDIModificationFramework
                 {
                     if (e2 != null)
                     {
-                        if (e1.DeltaTime < e2.DeltaTime)
+                        if (e1.DeltaTime <= e2.DeltaTime)
                         {
                             e2.DeltaTime -= e1.DeltaTime;
                             yield return e1;
