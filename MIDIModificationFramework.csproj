@@ -1,125 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{49122F52-0B71-46BE-9F86-17A53C7FF333}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MIDIModificationFramework</RootNamespace>
-    <AssemblyName>MIDIModificationFramework</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>net5.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BatchBlockingCollection.cs" />
-    <Compile Include="BufferByteReader.cs" />
-    <Compile Include="Extensions\EventSequenceExtensions.cs" />
-    <Compile Include="Extensions\NoteSequenceFunctions.cs" />
-    <Compile Include="Extensions\ThreadedSequenceFunctions.cs" />
-    <Compile Include="FastList.cs" />
-    <Compile Include="Generator\EventSequenceExtensions.cs" />
-    <Compile Include="Generator\Fields.cs" />
-    <Compile Include="Generator\Keep.cs" />
-    <Compile Include="Generator\Lines.cs" />
-    <Compile Include="Generator\Loop.cs" />
-    <Compile Include="Generator\MathHelper.cs" />
-    <Compile Include="Generator\NoteSequenceExtensions.cs" />
-    <Compile Include="Generator\TransformExtensions.cs" />
-    <Compile Include="IByteReader.cs" />
-    <Compile Include="Logic\Mergers.cs" />
-    <Compile Include="MIDIEvents\ChannelEvent.cs" />
-    <Compile Include="MIDIEvents\ChannelModeMessageEvent.cs" />
-    <Compile Include="MIDIEvents\ChannelPrefixEvent.cs" />
-    <Compile Include="MIDIEvents\ChannelPressureEvent.cs" />
-    <Compile Include="MIDIEvents\ColorEvent.cs" />
-    <Compile Include="MIDIEvents\ControlChangeEvent.cs" />
-    <Compile Include="MIDIEvents\CustomEvent.cs" />
-    <Compile Include="MIDIEvents\EndOfExclusiveEvent.cs" />
-    <Compile Include="MIDIEvents\KeySignatureEvent.cs" />
-    <Compile Include="MIDIEvents\MajorMidiMessageEvent.cs" />
-    <Compile Include="MIDIEvents\MIDIEvent.cs" />
-    <Compile Include="MIDIEvents\MIDIPortEvent.cs" />
-    <Compile Include="MIDIEvents\NoteEvent.cs" />
-    <Compile Include="MIDIEvents\NoteOffEvent.cs" />
-    <Compile Include="MIDIEvents\NoteOnEvent.cs" />
-    <Compile Include="MIDIEvents\PitchWheelChangeEvent.cs" />
-    <Compile Include="MIDIEvents\PolyphonicKeyPressureEvent.cs" />
-    <Compile Include="MIDIEvents\ProgramChangeEvent.cs" />
-    <Compile Include="MIDIEvents\SMPTEOffsetEvent.cs" />
-    <Compile Include="MIDIEvents\SongPositionPointerEvent.cs" />
-    <Compile Include="MIDIEvents\SongSelectEvent.cs" />
-    <Compile Include="MIDIEvents\SystemExclusiveMessageEvent.cs" />
-    <Compile Include="MIDIEvents\TempoEvent.cs" />
-    <Compile Include="MIDIEvents\TextEvent.cs" />
-    <Compile Include="MIDIEvents\TimeSignatureEvent.cs" />
-    <Compile Include="MIDIEvents\TrackStartEvent.cs" />
-    <Compile Include="MIDIEvents\TuneRequestEvent.cs" />
-    <Compile Include="MIDIEvents\UndefinedEvent.cs" />
-    <Compile Include="MidiFile.cs" />
-    <Compile Include="MidiWriter.cs" />
-    <Compile Include="Note.cs" />
-    <Compile Include="ParallelStream.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EventParser.cs" />
-    <Compile Include="Logic\NoteConversion.cs" />
-    <Compile Include="Logic\SequenceFunctions.cs" />
-    <Compile Include="TrackNote.cs" />
-    <Compile Include="XZ.cs" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
